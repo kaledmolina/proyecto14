@@ -1,6 +1,7 @@
 'use client'
 
 import { format } from 'date-fns'
+import { es } from 'date-fns/locale'
 import { Eye, User } from 'lucide-react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
@@ -15,7 +16,7 @@ interface ArticleCardProps {
 
 export function ArticleCard({ article, onClick }: ArticleCardProps) {
   const publishedDate = article.publishedAt
-    ? format(new Date(article.publishedAt), 'MMM d, yyyy')
+    ? format(new Date(article.publishedAt), "d 'de' MMM, yyyy", { locale: es })
     : null
 
   return (

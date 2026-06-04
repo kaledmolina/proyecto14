@@ -152,7 +152,7 @@ function StatsGrid({ stats }: { stats: Stats }) {
 function StatsGridSkeleton() {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {Array.from({ length: 6 }).map((_, i) => (
+      {Array.from({ length: 6 }).map((_: unknown, i: number) => (
         <Card key={i}>
           <CardContent className="p-4 lg:p-6">
             <div className="flex items-center justify-between">
@@ -351,7 +351,7 @@ function DashboardCharts({ stats }: { stats: Stats }) {
                     cx="50%"
                     cy="50%"
                     outerRadius={80}
-                    label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                    label={({ name, percent }: { name: string; percent: number }) => `${name} (${(percent * 100).toFixed(0)}%)`}
                     labelLine={false}
                   >
                     {categoriesData.map((entry, index) => (

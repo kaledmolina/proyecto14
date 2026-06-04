@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { format } from 'date-fns'
+import { es } from 'date-fns/locale'
 import { ArrowLeft, Eye, Clock, User, Tag, Share2, Check, Link, MessageCircle } from 'lucide-react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
@@ -21,7 +22,7 @@ interface RelatedArticleProps {
 
 function RelatedArticleCard({ article, onClick }: RelatedArticleProps) {
   const publishedDate = article.publishedAt
-    ? format(new Date(article.publishedAt), 'MMM d')
+    ? format(new Date(article.publishedAt), "d 'de' MMM", { locale: es })
     : ''
 
   return (
@@ -100,7 +101,7 @@ export function ArticleDetail() {
       const url = `${window.location.origin}/article/${selectedArticle?.id}`
       navigator.clipboard.writeText(url).then(() => {
         setCopied(true)
-        toast.success('Link copied to clipboard!')
+        toast.success('¡Enlace copiado al portapapeles!')
         setTimeout(() => setCopied(false), 2000)
       })
     }
@@ -150,7 +151,7 @@ export function ArticleDetail() {
   if (!selectedArticle) return null
 
   const publishedDate = selectedArticle.publishedAt
-    ? format(new Date(selectedArticle.publishedAt), 'MMMM d, yyyy')
+    ? format(new Date(selectedArticle.publishedAt), "d 'de' MMMM, yyyy", { locale: es })
     : ''
 
   // Estimate reading time (average 200 words per minute)
@@ -182,7 +183,7 @@ export function ArticleDetail() {
         className="mb-6 -ml-2 gap-2 text-sm text-muted-foreground hover:text-foreground"
       >
         <ArrowLeft className="h-4 w-4" />
-        Back to Articles
+        Volver a Artículos
       </Button>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_300px]">
@@ -200,15 +201,18 @@ export function ArticleDetail() {
             {selectedArticle.tags && selectedArticle.tags.length > 0 && (
               <>
                 <span className="text-muted-foreground">·</span>
-                {selectedArticle.tags.slice(0, 3).map(({ tag }) => (
-                  <span
-                    key={tag.id}
-                    className="flex items-center gap-1 text-xs text-muted-foreground"
-                  >
-                    <Tag className="h-3 w-3" />
-                    {tag.name}
-                  </span>
-                ))}
+                {selectedArticle.tags.slice(0, 3).map((t: any) => {
+                  const tag = t.tag ? t.tag : t
+                  return (
+                    <span
+                      key={tag.id}
+                      className="flex items-center gap-1 text-xs text-muted-foreground"
+                    >
+                      <Tag className="h-3 w-3" />
+                      {tag.name}
+                    </span>
+                  )
+                })}
               </>
             )}
           </div>
@@ -238,7 +242,7 @@ export function ArticleDetail() {
                   )}
                   <div>
                     <p className="font-medium text-foreground">{selectedArticle.author.name}</p>
-                    <p className="text-xs text-muted-foreground">Author</p>
+                    <p className="text-xs text-muted-foreground">Autor</p>
                   </div>
                 </div>
               )}
@@ -250,11 +254,11 @@ export function ArticleDetail() {
               )}
               <div className="flex items-center gap-1.5 text-sm">
                 <Clock className="h-4 w-4" />
-                {readingTime} min read
+                {readingTime} min de lectura
               </div>
               <div className="flex items-center gap-1.5 text-sm">
                 <Eye className="h-4 w-4" />
-                {selectedArticle.views} views
+                {selectedArticle.views} vistas
               </div>
             </div>
 
@@ -267,7 +271,7 @@ export function ArticleDetail() {
                 className="h-8 gap-1.5 text-xs"
               >
                 {copied ? <Check className="h-3.5 w-3.5 text-green-500" /> : <Link className="h-3.5 w-3.5" />}
-                Copy Link
+                Copiar Enlace
               </Button>
               <Button
                 variant="outline"
@@ -276,7 +280,7 @@ export function ArticleDetail() {
                 className="h-8 gap-1.5 text-xs hover:text-sky-400"
               >
                 <Share2 className="h-3.5 w-3.5" />
-                X / Twitter
+                Compartir en X
               </Button>
               <Button
                 variant="outline"
@@ -317,7 +321,7 @@ export function ArticleDetail() {
           <aside className="hidden lg:block">
             <div className="sticky top-20">
               <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                Related Articles
+                Artículos Relacionados
               </h3>
               <Separator className="mb-4" />
               <ScrollArea className="max-h-[calc(100vh-12rem)]">
@@ -341,7 +345,7 @@ export function ArticleDetail() {
         <div className="mt-10 lg:hidden">
           <Separator className="mb-6" />
           <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-            Related Articles
+            Artículos Relacionados
           </h3>
           <div className="grid gap-4 sm:grid-cols-2">
             {relatedArticles.slice(0, 2).map((article) => (

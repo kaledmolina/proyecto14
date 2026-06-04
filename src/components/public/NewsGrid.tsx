@@ -95,11 +95,11 @@ export function NewsGrid() {
     return (
       <section className="mx-auto flex max-w-7xl flex-col items-center justify-center px-4 py-20 text-center sm:px-6 lg:px-8">
         <Newspaper className="mb-4 h-12 w-12 text-muted-foreground/40" />
-        <h3 className="mb-2 text-lg font-semibold text-foreground">No articles found</h3>
+        <h3 className="mb-2 text-lg font-semibold text-foreground">No se encontraron artículos</h3>
         <p className="mb-4 text-sm text-muted-foreground">
           {selectedCategory || searchQuery
-            ? 'No articles match your filters.'
-            : 'Start by publishing your first article.'}
+            ? 'Ningún artículo coincide con los filtros.'
+            : 'Comienza publicando tu primer artículo.'}
         </p>
         {(selectedCategory || searchQuery) && (
           <button
@@ -109,7 +109,7 @@ export function NewsGrid() {
             }}
             className="text-sm font-medium text-destructive hover:underline"
           >
-            Clear all filters
+            Limpiar todos los filtros
           </button>
         )}
       </section>
@@ -129,7 +129,7 @@ export function NewsGrid() {
                 : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground'
             }`}
           >
-            All
+            Todas
           </button>
           {categories.map((cat) => (
             <CategoryBadge
@@ -152,7 +152,7 @@ export function NewsGrid() {
       {searchQuery && (
         <div className="mb-6 flex items-center justify-between rounded-lg border border-border bg-muted/40 px-4 py-3">
           <div className="flex items-center gap-2 text-sm">
-            <span className="text-muted-foreground">Showing search results for:</span>
+            <span className="text-muted-foreground">Mostrando resultados de búsqueda para:</span>
             <span className="font-semibold text-foreground">"{searchQuery}"</span>
           </div>
           <Button
@@ -161,7 +161,7 @@ export function NewsGrid() {
             onClick={() => search('')}
             className="h-7 text-xs text-destructive hover:bg-destructive/10"
           >
-            Clear Search
+            Limpiar Búsqueda
           </Button>
         </div>
       )}
@@ -171,8 +171,8 @@ export function NewsGrid() {
         <div className="flex flex-1 items-center gap-3">
           <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground whitespace-nowrap">
             {selectedCategory
-              ? categories.find((c) => c.slug === selectedCategory)?.name || 'Latest'
-              : 'Latest Stories'}
+              ? categories.find((c) => c.slug === selectedCategory)?.name || 'Últimas'
+              : 'Últimas Historias'}
           </h2>
           <div className="h-px w-full bg-border" />
         </div>
@@ -180,7 +180,7 @@ export function NewsGrid() {
         {/* Sorting Controls */}
         <div className="flex items-center gap-2 self-end sm:self-auto">
           <SlidersHorizontal className="h-3.5 w-3.5 text-muted-foreground" />
-          <span className="text-xs text-muted-foreground mr-1">Sort:</span>
+          <span className="text-xs text-muted-foreground mr-1">Ordenar:</span>
           <div className="inline-flex rounded-lg bg-muted p-0.5">
             <button
               onClick={() => setSortBy('latest')}
@@ -190,7 +190,7 @@ export function NewsGrid() {
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              Latest
+              Recientes
             </button>
             <button
               onClick={() => setSortBy('views')}
@@ -200,7 +200,7 @@ export function NewsGrid() {
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              Popular
+              Populares
             </button>
           </div>
         </div>

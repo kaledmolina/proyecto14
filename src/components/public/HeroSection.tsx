@@ -1,6 +1,7 @@
 'use client'
 
 import { format } from 'date-fns'
+import { es } from 'date-fns/locale'
 import { User, Clock } from 'lucide-react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
@@ -14,7 +15,7 @@ interface HeroSectionProps {
 
 export function HeroSection({ article, onClick }: HeroSectionProps) {
   const publishedDate = article.publishedAt
-    ? format(new Date(article.publishedAt), 'MMMM d, yyyy')
+    ? format(new Date(article.publishedAt), "d 'de' MMMM, yyyy", { locale: es })
     : ''
 
   return (

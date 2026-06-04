@@ -83,7 +83,7 @@ export function PublicHeader({ onLoginClick }: PublicHeaderProps) {
                 : 'text-muted-foreground'
             }`}
           >
-            All
+            Todas
             {selectedCategory === null && (
               <motion.div
                 layoutId="activeCategory"
@@ -132,7 +132,7 @@ export function PublicHeader({ onLoginClick }: PublicHeaderProps) {
                   <Input
                     name="search"
                     type="search"
-                    placeholder="Search articles..."
+                    placeholder="Buscar artículos..."
                     className="h-8 w-full rounded-full border-border bg-secondary pl-3 pr-8 text-sm"
                     autoFocus
                   />
@@ -196,7 +196,7 @@ export function PublicHeader({ onLoginClick }: PublicHeaderProps) {
             </SheetTrigger>
             <SheetContent side="right" className="w-72 overflow-y-auto">
               <SheetHeader>
-                <SheetTitle className="text-left font-bold">Menu</SheetTitle>
+                <SheetTitle className="text-left font-bold">Menú</SheetTitle>
               </SheetHeader>
 
               {/* Mobile Search */}
@@ -204,7 +204,7 @@ export function PublicHeader({ onLoginClick }: PublicHeaderProps) {
                 <form onSubmit={handleMobileSearch} className="relative">
                   <Input
                     type="search"
-                    placeholder="Search articles..."
+                    placeholder="Buscar artículos..."
                     value={mobileSearchQuery}
                     onChange={(e) => setMobileSearchQuery(e.target.value)}
                     className="h-9 rounded-full border-border bg-secondary pl-3 pr-8 text-sm"
@@ -227,7 +227,7 @@ export function PublicHeader({ onLoginClick }: PublicHeaderProps) {
                       : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                   }`}
                 >
-                  All News
+                  Todas las Noticias
                 </button>
                 {categories.map((cat) => (
                   <button
@@ -261,7 +261,7 @@ export function PublicHeader({ onLoginClick }: PublicHeaderProps) {
                   onClick={onLoginClick}
                 >
                   <LogIn className="h-4 w-4" />
-                  Sign In
+                  Iniciar Sesión
                 </Button>
               </div>
             </SheetContent>
