@@ -3,6 +3,8 @@ import { db } from '@/lib/db'
 import { notFound } from 'next/navigation'
 import ArticlePageClient from './ArticlePageClient'
 
+export const dynamic = "force-dynamic";
+
 interface Props {
   params: Promise<{ id: string }>
 }
@@ -22,18 +24,31 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
   }
 
+  // Fetch dynamic site name
+  let siteName = 'Colombia En Debate'
+  try {
+    const setting = await db.siteSettings.findFirst({
+      where: { key: 'site_name' }
+    })
+    if (setting?.value) {
+      siteName = setting.value
+    }
+  } catch (error) {
+    console.error("Failed to fetch site_name for article metadata:", error)
+  }
+
   // Prepend domain for openGraph image
-  const baseUrl = process.env.NEXTAUTH_URL || 'https://pulso24.tech'
+  const baseUrl = process.env.NEXTAUTH_URL || 'https://colombiadebate.com'
   const imageUrl = article.coverImage 
     ? (article.coverImage.startsWith('http') ? article.coverImage : `${baseUrl}${article.coverImage}`)
     : `${baseUrl}/api/placeholder`
 
   return {
-    title: `${article.title} | Pulso24`,
-    description: article.excerpt || 'Lee este interesante artículo en Pulso24.',
+    title: `${article.title} | ${siteName}`,
+    description: article.excerpt || `Lee este interesante artículo en ${siteName}.`,
     openGraph: {
       title: article.title,
-      description: article.excerpt || 'Lee este interesante artículo en Pulso24.',
+      description: article.excerpt || `Lee este interesante artículo en ${siteName}.`,
       type: 'article',
       url: `${baseUrl}/article/${article.id}`,
       images: [
@@ -44,12 +59,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           alt: article.title,
         }
       ],
-      siteName: 'Pulso24',
+      siteName: siteName,
     },
     twitter: {
       card: 'summary_large_image',
       title: article.title,
-      description: article.excerpt || 'Lee este interesante artículo en Pulso24.',
+      description: article.excerpt || `Lee este interesante artículo en ${siteName}.`,
       images: [imageUrl],
     }
   }
