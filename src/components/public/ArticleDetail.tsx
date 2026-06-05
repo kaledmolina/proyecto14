@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { ArrowLeft, Eye, Clock, User, Tag, Share2, Check, Link, MessageCircle } from 'lucide-react'
+import { ArrowLeft, Eye, Clock, Tag, Share2, Check, Link, MessageCircle } from 'lucide-react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import ReactMarkdown from 'react-markdown'

@@ -2,7 +2,7 @@
 
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { User, Clock } from 'lucide-react'
+import { Clock } from 'lucide-react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Article } from '@/store/public-store'

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { User, Clock, ChevronLeft, ChevronRight, Play, Pause } from 'lucide-react'
+import { Clock, ChevronLeft, ChevronRight, Play, Pause } from 'lucide-react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Article } from '@/store/public-store'
