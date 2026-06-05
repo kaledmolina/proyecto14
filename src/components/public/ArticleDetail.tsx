@@ -242,7 +242,6 @@ export function ArticleDetail() {
                   )}
                   <div>
                     <p className="font-medium text-foreground">{selectedArticle.author.name}</p>
-                    <p className="text-xs text-muted-foreground">Autor</p>
                   </div>
                 </div>
               )}
