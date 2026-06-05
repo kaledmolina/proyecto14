@@ -39,5 +39,5 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Startup command: wait for MySQL to start, run database push, and start application
-CMD ["sh", "-c", "until nc -z db 3306; do echo 'Waiting for MySQL...'; sleep 2; done && prisma db push --accept-data-loss && node server.js"]
+# Startup command: wait for MySQL to start using a robust Node.js script, run database push, and start application
+CMD ["sh", "-c", "until node -e \"const net = require('net'); const client = net.connect({port: 3306, host: 'db'}, () => { client.end(); process.exit(0); }); client.on('error', () => process.exit(1));\"; do echo 'Waiting for MySQL database connection...'; sleep 2; done && prisma db push --accept-data-loss && node server.js"]
