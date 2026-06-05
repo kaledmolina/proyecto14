@@ -16,6 +16,8 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata(): Promise<Metadata> {
   let settingsMap: Record<string, string> = {};
   try {
