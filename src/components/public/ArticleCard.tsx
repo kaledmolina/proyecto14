@@ -73,24 +73,6 @@ export function ArticleCard({ article, onClick }: ArticleCardProps) {
         {/* Meta */}
         <div className="mt-4 flex items-center gap-3 border-t border-border/30 pt-3">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            {article.author ? (
-              <>
-                {article.author.avatar ? (
-                  <Image
-                    src={article.author.avatar}
-                    alt={article.author.name}
-                    width={20}
-                    height={20}
-                    className="rounded-full ring-1 ring-border/50"
-                  />
-                ) : (
-                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-muted">
-                    <User className="h-2.5 w-2.5" />
-                  </div>
-                )}
-                <span className="font-semibold text-foreground/80 text-[11px]">{article.author.name}</span>
-              </>
-            ) : null}
           </div>
           <span className="text-[11px] text-muted-foreground/80">
             {publishedDate}
