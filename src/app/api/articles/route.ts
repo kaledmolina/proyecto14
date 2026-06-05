@@ -27,7 +27,21 @@ export async function GET(request: NextRequest) {
     const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "12", 10)));
     const featured = searchParams.get("featured");
 
-    const where: Record<string, unknown> = { status: "PUBLISHED" };
+    const statusParam = searchParams.get("status") || "PUBLISHED";
+    const where: Record<string, unknown> = {};
+
+    if (statusParam !== "PUBLISHED") {
+      const session = await getServerSession(authOptions);
+      if (!session || !["ADMIN", "WRITER"].includes(session.user.role)) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+
+      if (statusParam !== "ALL") {
+        where.status = statusParam;
+      }
+    } else {
+      where.status = "PUBLISHED";
+    }
 
     if (categorySlug) {
       const category = await db.category.findUnique({ where: { slug: categorySlug } });

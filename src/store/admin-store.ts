@@ -246,6 +246,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       if (articleSearchQuery) params.set('search', articleSearchQuery)
       params.set('limit', '100')
       params.set('page', '1')
+      params.set('status', 'ALL')
 
       const res = await fetch(`/api/articles?${params.toString()}`)
       if (res.ok) {
