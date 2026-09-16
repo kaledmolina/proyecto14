@@ -29,9 +29,9 @@ export async function generateMetadata(): Promise<Metadata> {
     console.error("Failed to fetch settings for metadata:", error);
   }
 
-  const siteName = settingsMap["site_name"] || "Noticias Hoy";
-  const siteDesc = settingsMap["site_description"] || "Tu portal de noticias digital de confianza. Las últimas noticias de tecnología, deportes, política, ciencia, cultura y economía.";
-  const siteFavicon = settingsMap["site_favicon"] || "https://api.dicebear.com/9.x/initials/svg?seed=NH&backgroundColor=c0392b";
+  const siteName = settingsMap["site_name"] || "Tolima Informa";
+  const siteDesc = settingsMap["site_description"] || "Tu portal de noticias digital de confianza. Las últimas noticias de Tolima, actualidad, tecnología, deportes, política, ciencia, cultura y economía.";
+  const siteFavicon = settingsMap["site_favicon"] || "https://api.dicebear.com/9.x/initials/svg?seed=TI&backgroundColor=c0392b";
 
   return {
     title: `${siteName} | Portal de Noticias Digital`,

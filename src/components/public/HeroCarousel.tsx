@@ -102,7 +102,7 @@ export function HeroCarousel({ articles, onArticleClick }: HeroCarouselProps) {
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/25 to-accent/30">
-                <span className="text-5xl font-black font-heading text-primary-foreground/30">colombiadebate</span>
+                <span className="text-5xl font-black font-heading text-primary-foreground/30">tolimainforma</span>
               </div>
             )}
 

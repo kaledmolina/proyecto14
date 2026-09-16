@@ -30,7 +30,7 @@ export function PublicHeader({ onLoginClick }: PublicHeaderProps) {
   
   const settings = usePublicStore((s) => s.settings || {})
   const isSettingsLoading = Object.keys(settings).length === 0
-  const siteName = settings.site_name || 'NewsPortal'
+  const siteName = settings.site_name || 'Tolima Informa'
   const siteLogo = settings.site_logo
 
   const firstLetter = siteName.charAt(0)

@@ -47,7 +47,7 @@ export function HeroSection({ article, onClick }: HeroSectionProps) {
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/10 to-accent/15">
-              <span className="text-6xl font-black font-heading text-primary/20">colombiadebate</span>
+              <span className="text-6xl font-black font-heading text-primary/20">tolimainforma</span>
             </div>
           )}
 

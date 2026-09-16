@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   // Fetch dynamic site name
-  let siteName = 'Colombia En Debate'
+  let siteName = 'Tolima Informa'
   try {
     const setting = await db.siteSettings.findFirst({
       where: { key: 'site_name' }

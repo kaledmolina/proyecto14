@@ -38,6 +38,9 @@ function PublicPortal({ onLoginClick }: { onLoginClick: () => void }) {
   const fetchArticles = usePublicStore((s) => s.fetchArticles)
   const fetchArticle = usePublicStore((s) => s.fetchArticle)
 
+  const publicSettings = usePublicStore((s) => s.settings)
+  const selectedArticle = usePublicStore((s) => s.selectedArticle)
+
   useEffect(() => {
     fetchCategories()
     fetchSettings()
@@ -48,6 +51,18 @@ function PublicPortal({ onLoginClick }: { onLoginClick: () => void }) {
       fetchArticles({ limit: 12 })
     }
   }, [currentView, fetchArticles])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const siteName = publicSettings.site_name || 'Tolima Informa'
+      const seoTitle = publicSettings.seo_title || `${siteName} | Portal de Noticias Digital`
+      if (currentView === 'article' && selectedArticle) {
+        document.title = `${selectedArticle.title} | ${siteName}`
+      } else {
+        document.title = seoTitle
+      }
+    }
+  }, [currentView, selectedArticle, publicSettings])
 
   // Get articles for carousel: featured ones first, or fallback to top 4 latest
   const featured = articles.filter((a) => a.isFeatured)

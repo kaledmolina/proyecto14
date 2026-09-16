@@ -87,7 +87,7 @@ function SidebarContent({
           <Shield className="h-5 w-5" />
         </div>
         <div>
-          <h2 className="text-sm font-bold leading-tight">Portal de Noticias</h2>
+          <h2 className="text-sm font-bold leading-tight">Tolima Informa</h2>
           <p className="text-xs text-muted-foreground">Panel de Control</p>
         </div>
       </div>

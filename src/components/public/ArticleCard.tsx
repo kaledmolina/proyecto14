@@ -47,7 +47,7 @@ export function ArticleCard({ article, onClick }: ArticleCardProps) {
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-muted/40">
-            <span className="text-xl font-bold text-muted-foreground/30 font-heading">colombiadebate</span>
+            <span className="text-xl font-bold text-muted-foreground/30 font-heading">tolimainforma</span>
           </div>
         )}
         {article.category && (
