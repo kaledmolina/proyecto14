@@ -88,7 +88,16 @@ export const usePublicStore = create<PublicState>((set, get) => ({
       const res = await fetch('/api/settings')
       if (res.ok) {
         const data = await res.json()
-        set({ settings: data })
+        const cleanSettings: Record<string, string> = {}
+        for (const [k, v] of Object.entries(data)) {
+          cleanSettings[k] = typeof v === 'string'
+            ? v.replace(/Colombia\s+en\s+Debate/gi, 'Tolima Informa')
+            : (v as any)
+        }
+        if (!cleanSettings.site_name || /Colombia\s+en\s+Debate/i.test(cleanSettings.site_name)) {
+          cleanSettings.site_name = 'Tolima Informa'
+        }
+        set({ settings: cleanSettings })
       }
     } catch {
       console.error('Failed to fetch settings')

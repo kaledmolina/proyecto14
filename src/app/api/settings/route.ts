@@ -13,6 +13,24 @@ export async function GET() {
     for (const s of settings) {
       settingsMap[s.key] = s.value;
     }
+
+    // Auto-migrate legacy "Colombia En Debate" settings in DB to "Tolima Informa"
+    for (const [key, val] of Object.entries(settingsMap)) {
+      if (typeof val === "string" && /Colombia\s+en\s+Debate/i.test(val)) {
+        const newVal = val.replace(/Colombia\s+en\s+Debate/gi, "Tolima Informa");
+        settingsMap[key] = newVal;
+        // Asynchronously update in database so future queries are fixed
+        db.siteSettings.update({
+          where: { key },
+          data: { value: newVal },
+        }).catch((e) => console.error(`Failed to auto-update setting ${key}:`, e));
+      }
+    }
+
+    if (!settingsMap["site_name"] || /Colombia\s+en\s+Debate/i.test(settingsMap["site_name"])) {
+      settingsMap["site_name"] = "Tolima Informa";
+    }
+
     return NextResponse.json(settingsMap);
   } catch (error) {
     return NextResponse.json(

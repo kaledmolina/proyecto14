@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       where: { key: 'site_name' }
     })
     if (setting?.value) {
-      siteName = setting.value
+      siteName = setting.value.replace(/Colombia\s+en\s+Debate/gi, 'Tolima Informa')
     }
   } catch (error) {
     console.error("Failed to fetch site_name for article metadata:", error)

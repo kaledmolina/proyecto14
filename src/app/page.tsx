@@ -54,8 +54,10 @@ function PublicPortal({ onLoginClick }: { onLoginClick: () => void }) {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const siteName = publicSettings.site_name || 'Tolima Informa'
-      const seoTitle = publicSettings.seo_title || `${siteName} | Portal de Noticias Digital`
+      const rawSiteName = publicSettings.site_name || 'Tolima Informa'
+      const siteName = rawSiteName.replace(/Colombia\s+en\s+Debate/gi, 'Tolima Informa')
+      const rawSeoTitle = publicSettings.seo_title || `${siteName} | Portal de Noticias Digital`
+      const seoTitle = rawSeoTitle.replace(/Colombia\s+en\s+Debate/gi, 'Tolima Informa')
       if (currentView === 'article' && selectedArticle) {
         document.title = `${selectedArticle.title} | ${siteName}`
       } else {

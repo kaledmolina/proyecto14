@@ -10,7 +10,8 @@ export function PublicFooter() {
 
   const settings = usePublicStore((s) => s.settings || {})
   const isSettingsLoading = Object.keys(settings).length === 0
-  const siteName = settings.site_name || 'Tolima Informa'
+  const rawSiteName = settings.site_name || 'Tolima Informa'
+  const siteName = rawSiteName.replace(/Colombia\s+en\s+Debate/gi, 'Tolima Informa')
   const siteLogo = settings.site_logo
 
   const firstLetter = siteName.charAt(0)
