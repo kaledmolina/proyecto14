@@ -60,6 +60,17 @@ function PublicPortal({ onLoginClick }: { onLoginClick: () => void }) {
       ) {
         setView('survey')
       }
+
+      const handlePopState = () => {
+        const path = window.location.pathname
+        if (path === '/encuesta') {
+          setView('survey')
+        } else if (path === '/') {
+          setView('home')
+        }
+      }
+      window.addEventListener('popstate', handlePopState)
+      return () => window.removeEventListener('popstate', handlePopState)
     }
   }, [setView])
 
@@ -168,6 +179,9 @@ function PublicPortal({ onLoginClick }: { onLoginClick: () => void }) {
                       <Button
                         onClick={() => {
                           setView('survey')
+                          if (typeof window !== 'undefined') {
+                            window.history.pushState(null, '', '/encuesta')
+                          }
                           window.scrollTo({ top: 0, behavior: 'smooth' })
                         }}
                         className="bg-white text-rose-700 hover:bg-white/95 font-bold px-5 py-2.5 h-auto text-sm shadow-md rounded-xl hover:scale-105 transition-transform"
@@ -200,7 +214,14 @@ function PublicPortal({ onLoginClick }: { onLoginClick: () => void }) {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <SurveyForm onBackToHome={() => setView('home')} />
+              <SurveyForm
+                onBackToHome={() => {
+                  setView('home')
+                  if (typeof window !== 'undefined') {
+                    window.history.pushState(null, '', '/')
+                  }
+                }}
+              />
             </motion.div>
           ) : (
             <motion.div

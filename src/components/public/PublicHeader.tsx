@@ -74,6 +74,9 @@ export function PublicHeader({ onLoginClick }: PublicHeaderProps) {
           onClick={() => {
             setView('home')
             handleCategoryClick(null)
+            if (typeof window !== 'undefined' && window.location.pathname !== '/') {
+              window.history.pushState(null, '', '/')
+            }
           }}
           className="flex items-center gap-2 text-xl font-extrabold tracking-tight font-heading"
         >
@@ -140,6 +143,9 @@ export function PublicHeader({ onLoginClick }: PublicHeaderProps) {
           <button
             onClick={() => {
               setView('survey')
+              if (typeof window !== 'undefined') {
+                window.history.pushState(null, '', '/encuesta')
+              }
               window.scrollTo({ top: 0, behavior: 'smooth' })
             }}
             className={`ml-2 relative flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-full transition-all duration-300 border ${
@@ -263,6 +269,9 @@ export function PublicHeader({ onLoginClick }: PublicHeaderProps) {
                 <button
                   onClick={() => {
                     setView('survey')
+                    if (typeof window !== 'undefined') {
+                      window.history.pushState(null, '', '/encuesta')
+                    }
                     window.scrollTo({ top: 0, behavior: 'smooth' })
                   }}
                   className="flex items-center justify-between p-3 mb-1 rounded-xl bg-gradient-to-r from-red-600 to-rose-700 text-white font-semibold text-sm shadow-md"
