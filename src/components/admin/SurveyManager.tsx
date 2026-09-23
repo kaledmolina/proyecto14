@@ -25,6 +25,12 @@ import {
   Share2,
   Copy,
   ExternalLink,
+  ThumbsUp,
+  ThumbsDown,
+  Scale,
+  BarChart3,
+  ListOrdered,
+  Sparkles,
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -279,6 +285,22 @@ export default function SurveyManager() {
     stats?.cityTrackStats?.find((t) => t.name === 'Buen camino')?.percentage || 0
   const badTrackPct =
     stats?.cityTrackStats?.find((t) => t.name === 'Mal camino')?.percentage || 0
+  const otherTrackPct =
+    stats?.cityTrackStats?.find((t) => t.name === 'No sabe/No responde')?.percentage || 0
+
+  const positiveRatingPct = (
+    (stats?.managementStats?.find((m) => m.name === 'Muy buena')?.percentage || 0) +
+    (stats?.managementStats?.find((m) => m.name === 'Buena')?.percentage || 0)
+  ).toFixed(1)
+  const negativeRatingPct = (
+    (stats?.managementStats?.find((m) => m.name === 'Mala')?.percentage || 0) +
+    (stats?.managementStats?.find((m) => m.name === 'Muy mala')?.percentage || 0)
+  ).toFixed(1)
+  const regularRatingPct = (
+    stats?.managementStats?.find((m) => m.name === 'Regular')?.percentage || 0
+  ).toFixed(1)
+
+  const [candidateViewMode, setCandidateViewMode] = useState<'ranking' | 'chart'>('ranking')
 
   const handleCopySurveyLink = async () => {
     const url = typeof window !== 'undefined' ? `${window.location.origin}/encuesta` : '/encuesta'
@@ -302,200 +324,213 @@ export default function SurveyManager() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 max-w-[1550px] mx-auto pb-12">
       {/* Top Banner & Action Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-card p-6 rounded-2xl border shadow-sm">
-        <div className="space-y-1">
-          <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-600 dark:text-rose-400">
-            <Vote className="h-3.5 w-3.5" />
-            Ibagué decide · Opinión Pública Ibagué
+      <div className="relative overflow-hidden bg-card border rounded-3xl p-6 sm:p-8 shadow-sm">
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-red-600 via-rose-500 to-amber-500" />
+        
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div className="space-y-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge className="bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-500/15 border-0 font-semibold gap-1.5 px-3 py-1">
+                <span className="flex h-2 w-2 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+                </span>
+                Sondeo en Vivo
+              </Badge>
+              <Badge variant="outline" className="text-muted-foreground text-xs font-normal">
+                Ibagué, Tolima
+              </Badge>
+              <Badge variant="outline" className="text-muted-foreground text-xs font-normal">
+                {stats?.totalResponses || 0} ciudadanos registrados
+              </Badge>
+            </div>
+
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+              Ibagué decide · Informe de Encuesta
+            </h1>
+            <p className="text-sm text-muted-foreground max-w-2xl leading-relaxed">
+              Analítica de opinión pública ciudadana en tiempo real, intención de voto a la Alcaldía, problemáticas de ciudad y gestión gubernamental.
+            </p>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">Informe de Encuesta: Ibagué</h1>
-          <p className="text-xs sm:text-sm text-muted-foreground">
-            Resultados consolidados, analítica de intención de voto y exportación en tiempo real.
-          </p>
-        </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleCopySurveyLink}
-            className="gap-1.5 border-rose-500/25 text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 shadow-sm"
-            title="Copiar enlace directo /encuesta"
-          >
-            <Share2 className="h-4 w-4" />
-            Copiar Link del Sondeo
-          </Button>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleCopySurveyLink}
+              className="gap-2 border-rose-500/25 text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 shadow-sm rounded-xl font-medium"
+              title="Copiar enlace directo /encuesta"
+            >
+              <Share2 className="h-4 w-4" />
+              Copiar Link Directo
+            </Button>
 
-          <Button
-            variant="ghost"
-            size="sm"
-            asChild
-            className="gap-1.5 text-muted-foreground hover:text-foreground"
-          >
-            <a href="/encuesta" target="_blank" rel="noopener noreferrer">
-              <ExternalLink className="h-4 w-4" />
-              Ver encuesta
-            </a>
-          </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              asChild
+              className="gap-2 text-muted-foreground hover:text-foreground rounded-xl"
+            >
+              <a href="/encuesta" target="_blank" rel="noopener noreferrer">
+                <ExternalLink className="h-4 w-4" />
+                Ver encuesta
+              </a>
+            </Button>
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              fetchStats()
-              fetchResponses(page)
-              toast.info('Datos actualizados')
-            }}
-            disabled={loadingStats}
-            className="gap-1.5"
-          >
-            <RefreshCw className={`h-4 w-4 ${loadingStats ? 'animate-spin' : ''}`} />
-            Actualizar
-          </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                fetchStats()
+                fetchResponses(page)
+                toast.info('Datos actualizados')
+              }}
+              disabled={loadingStats}
+              className="gap-2 rounded-xl"
+            >
+              <RefreshCw className={`h-4 w-4 ${loadingStats ? 'animate-spin' : ''}`} />
+              Actualizar
+            </Button>
 
-          <Button
-            size="sm"
-            onClick={handleExportExcel}
-            disabled={isExporting || (stats?.totalResponses || 0) === 0}
-            className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm"
-          >
-            {isExporting ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <FileSpreadsheet className="h-4 w-4" />
-            )}
-            Descargar Excel (.xlsx)
-          </Button>
+            <Button
+              size="sm"
+              onClick={handleExportExcel}
+              disabled={isExporting || (stats?.totalResponses || 0) === 0}
+              className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm rounded-xl font-medium"
+            >
+              {isExporting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <FileSpreadsheet className="h-4 w-4" />
+              )}
+              Descargar Excel (.xlsx)
+            </Button>
+          </div>
         </div>
       </div>
 
       {/* KPI Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Total Responses */}
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {/* Total Respuestas */}
+        <Card className="rounded-2xl shadow-sm hover:shadow transition-all border p-6 flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               Total Respuestas
-            </CardTitle>
-            <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+            </span>
+            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
               <Users className="h-5 w-5" />
             </div>
-          </CardHeader>
-          <CardContent>
-            {loadingStats ? (
-              <Skeleton className="h-8 w-20" />
-            ) : (
-              <div className="space-y-1">
-                <div className="text-2xl font-bold">{stats?.totalResponses.toLocaleString()}</div>
-                <p className="text-xs text-muted-foreground">
-                  <span className="font-semibold text-emerald-600">
-                    +{stats?.todayResponses || 0}
-                  </span>{' '}
-                  recibidas hoy
-                </p>
-              </div>
-            )}
-          </CardContent>
+          </div>
+          <div className="mt-4 space-y-1">
+            <div className="text-3xl font-extrabold tracking-tight">
+              {loadingStats ? <Skeleton className="h-9 w-20" /> : (stats?.totalResponses.toLocaleString() || 0)}
+            </div>
+            <p className="text-xs text-muted-foreground flex items-center gap-1.5 font-medium">
+              <span className="inline-flex items-center text-emerald-600 font-semibold bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                +{stats?.todayResponses || 0} hoy
+              </span>
+              participaciones ciudadanas
+            </p>
+          </div>
         </Card>
 
-        {/* Top Candidate */}
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+        {/* Intención de Voto #1 */}
+        <Card className="rounded-2xl shadow-sm hover:shadow transition-all border p-6 flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               Intención de Voto #1
-            </CardTitle>
-            <div className="h-9 w-9 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600">
+            </span>
+            <div className="h-10 w-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600">
               <Award className="h-5 w-5" />
             </div>
-          </CardHeader>
-          <CardContent>
-            {loadingStats ? (
-              <Skeleton className="h-8 w-28" />
-            ) : (
-              <div className="space-y-1">
-                <div className="text-xl font-bold truncate">
-                  {topCandidate ? topCandidate.name : 'Sin datos'}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  {topCandidate
-                    ? `${topCandidate.percentage}% (${topCandidate.count} votos)`
-                    : 'A la espera de respuestas'}
-                </p>
-              </div>
-            )}
-          </CardContent>
+          </div>
+          <div className="mt-4 space-y-1">
+            <div className="text-xl font-bold tracking-tight truncate text-foreground">
+              {loadingStats ? <Skeleton className="h-7 w-28" /> : (topCandidate && topCandidate.count > 0 ? topCandidate.name : 'Sin votos aún')}
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">
+              {topCandidate && topCandidate.count > 0 ? (
+                <span className="text-amber-600 font-semibold">
+                  {topCandidate.percentage}% ({topCandidate.count} {topCandidate.count === 1 ? 'voto' : 'votos'})
+                </span>
+              ) : (
+                'A la espera de respuestas'
+              )}
+            </p>
+          </div>
         </Card>
 
-        {/* Top Problem */}
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+        {/* Principal Problema */}
+        <Card className="rounded-2xl shadow-sm hover:shadow transition-all border p-6 flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               Principal Problema
-            </CardTitle>
-            <div className="h-9 w-9 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-600">
+            </span>
+            <div className="h-10 w-10 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-600">
               <AlertTriangle className="h-5 w-5" />
             </div>
-          </CardHeader>
-          <CardContent>
-            {loadingStats ? (
-              <Skeleton className="h-8 w-28" />
-            ) : (
-              <div className="space-y-1">
-                <div className="text-xl font-bold truncate">
-                  {topProblem ? topProblem.name : 'Sin datos'}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  {topProblem
-                    ? `${topProblem.percentage}% de menciones`
-                    : 'A la espera de respuestas'}
-                </p>
-              </div>
-            )}
-          </CardContent>
+          </div>
+          <div className="mt-4 space-y-1">
+            <div className="text-xl font-bold tracking-tight truncate text-foreground">
+              {loadingStats ? <Skeleton className="h-7 w-28" /> : (topProblem && topProblem.count > 0 ? topProblem.name : 'Sin registrar')}
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">
+              {topProblem && topProblem.count > 0 ? (
+                <span className="text-rose-600 font-semibold">
+                  {topProblem.percentage}% de menciones
+                </span>
+              ) : (
+                'A la espera de respuestas'
+              )}
+            </p>
+          </div>
         </Card>
 
-        {/* City Direction Ratio */}
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+        {/* Rumbo de la Ciudad */}
+        <Card className="rounded-2xl shadow-sm hover:shadow transition-all border p-6 flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               Rumbo de Ibagué
-            </CardTitle>
-            <div className="h-9 w-9 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-600">
+            </span>
+            <div className="h-10 w-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-600">
               <TrendingUp className="h-5 w-5" />
             </div>
-          </CardHeader>
-          <CardContent>
-            {loadingStats ? (
-              <Skeleton className="h-8 w-28" />
-            ) : (
-              <div className="space-y-1">
-                <div className="text-xl font-bold flex items-center gap-2">
-                  <span className="text-emerald-600">{goodTrackPct}%</span>
-                  <span className="text-xs text-muted-foreground font-normal">vs</span>
-                  <span className="text-rose-600">{badTrackPct}%</span>
-                </div>
-                <p className="text-xs text-muted-foreground">Buen camino vs Mal camino</p>
-              </div>
-            )}
-          </CardContent>
+          </div>
+          <div className="mt-4 space-y-1">
+            <div className="text-xl font-bold flex items-center gap-2">
+              <span className="text-emerald-600 font-extrabold">{goodTrackPct}%</span>
+              <span className="text-[11px] text-muted-foreground font-normal">Buen camino</span>
+              <span className="text-muted-foreground/30 font-light">/</span>
+              <span className="text-rose-600 font-extrabold">{badTrackPct}%</span>
+              <span className="text-[11px] text-muted-foreground font-normal">Mal camino</span>
+            </div>
+            <p className="text-xs text-muted-foreground font-medium">
+              Percepción del rumbo general
+            </p>
+          </div>
         </Card>
       </div>
 
       {/* Main Tabs Navigation */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid grid-cols-3 max-w-md">
-          <TabsTrigger value="dashboard" className="text-xs sm:text-sm font-semibold">
-            Gráficos e Informe
-          </TabsTrigger>
-          <TabsTrigger value="opinions" className="text-xs sm:text-sm font-semibold">
-            Voz Ciudadana ({stats?.openAnswers?.length || 0})
-          </TabsTrigger>
-          <TabsTrigger value="responses" className="text-xs sm:text-sm font-semibold">
-            Respuestas ({totalRecords})
-          </TabsTrigger>
-        </TabsList>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4">
+          <TabsList className="grid grid-cols-3 max-w-md p-1.5 h-auto rounded-2xl bg-muted/70">
+            <TabsTrigger value="dashboard" className="text-xs sm:text-sm font-semibold rounded-xl gap-2 py-2">
+              <BarChart3 className="h-4 w-4" />
+              <span className="hidden sm:inline">Métricas y</span> Gráficos
+            </TabsTrigger>
+            <TabsTrigger value="opinions" className="text-xs sm:text-sm font-semibold rounded-xl gap-2 py-2">
+              <MessageSquare className="h-4 w-4" />
+              Voz Ciudadana ({stats?.openAnswers?.length || 0})
+            </TabsTrigger>
+            <TabsTrigger value="responses" className="text-xs sm:text-sm font-semibold rounded-xl gap-2 py-2">
+              <FileSpreadsheet className="h-4 w-4" />
+              Respuestas ({totalRecords})
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         {/* TAB 1: GRÁFICOS E INFORME ESTADÍSTICO */}
         <TabsContent value="dashboard" className="space-y-6">
@@ -527,51 +562,133 @@ export default function SurveyManager() {
               </Button>
             </Card>
           ) : (
-            <div className="space-y-6">
+            <div className="space-y-8">
               {/* Row 1: Intención de Voto Alcaldía & Calificación Alcaldía */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Intención de Voto */}
-                <Card className="rounded-2xl shadow-sm">
-                  <CardHeader>
-                    <CardTitle className="text-base flex items-center justify-between">
-                      <span>Intención de Voto para Alcaldía</span>
-                      <Badge variant="outline" className="text-xs font-normal">
-                        P9 del Sondeo
-                      </Badge>
-                    </CardTitle>
-                    <CardDescription className="text-xs">
-                      Distribución porcentual de preferencias para Alcalde de Ibagué
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-80 w-full">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                {/* Intención de Voto para Alcaldía */}
+                <Card className="lg:col-span-7 rounded-3xl shadow-sm border p-6 sm:p-7 space-y-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className="text-xs font-semibold bg-rose-500/10 text-rose-600 border-0 px-2 py-0.5">
+                          P9 del Sondeo
+                        </Badge>
+                        <span className="text-xs text-muted-foreground font-medium">Elecciones Ibagué</span>
+                      </div>
+                      <h3 className="text-lg font-bold tracking-tight">Intención de Voto para Alcaldía</h3>
+                      <p className="text-xs text-muted-foreground">Distribución porcentual y conteo de votos de los candidatos</p>
+                    </div>
+
+                    {/* Toggle Ranking / Gráfico */}
+                    <div className="flex items-center gap-1 bg-muted/60 p-1 rounded-xl self-start sm:self-center">
+                      <Button
+                        type="button"
+                        variant={candidateViewMode === 'ranking' ? 'default' : 'ghost'}
+                        size="sm"
+                        onClick={() => setCandidateViewMode('ranking')}
+                        className="h-7 text-xs px-2.5 rounded-lg gap-1.5 font-semibold"
+                      >
+                        <ListOrdered className="h-3.5 w-3.5" />
+                        Ranking
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={candidateViewMode === 'chart' ? 'default' : 'ghost'}
+                        size="sm"
+                        onClick={() => setCandidateViewMode('chart')}
+                        className="h-7 text-xs px-2.5 rounded-lg gap-1.5 font-semibold"
+                      >
+                        <BarChart3 className="h-3.5 w-3.5" />
+                        Gráfico
+                      </Button>
+                    </div>
+                  </div>
+
+                  {candidateViewMode === 'ranking' ? (
+                    <div className="space-y-3">
+                      {(stats?.mayorCandidateStats || []).map((c, idx) => (
+                        <div
+                          key={c.name}
+                          className="p-3.5 rounded-2xl border bg-card/60 hover:bg-muted/20 transition-colors space-y-2"
+                        >
+                          <div className="flex items-center justify-between text-xs">
+                            <div className="flex items-center gap-2.5 font-semibold text-foreground">
+                              <span
+                                className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black shrink-0 ${
+                                  idx === 0 && c.count > 0
+                                    ? 'bg-amber-500 text-white shadow-sm'
+                                    : idx === 1 && c.count > 0
+                                    ? 'bg-slate-400 text-white'
+                                    : idx === 2 && c.count > 0
+                                    ? 'bg-amber-700 text-white'
+                                    : 'bg-muted text-muted-foreground'
+                                }`}
+                              >
+                                {idx + 1}
+                              </span>
+                              <span className="font-bold text-sm tracking-tight truncate max-w-[200px] sm:max-w-[320px]">
+                                {c.name}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-muted-foreground text-xs font-medium">
+                                {c.count} {c.count === 1 ? 'voto' : 'votos'}
+                              </span>
+                              <Badge
+                                variant="secondary"
+                                className="font-extrabold text-xs px-2.5 py-0.5 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                              >
+                                {c.percentage}%
+                              </Badge>
+                            </div>
+                          </div>
+                          <div className="w-full bg-muted/60 rounded-full h-2.5 overflow-hidden">
+                            <div
+                              className="h-full rounded-full transition-all duration-700 ease-out"
+                              style={{
+                                width: `${Math.max(c.percentage || 0, c.count > 0 ? 3 : 0)}%`,
+                                backgroundColor: PALETTE[idx % PALETTE.length],
+                              }}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="h-96 w-full pt-2">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart
                           layout="vertical"
                           data={stats?.mayorCandidateStats || []}
-                          margin={{ top: 5, right: 30, left: 40, bottom: 5 }}
+                          margin={{ top: 5, right: 35, left: 10, bottom: 5 }}
                         >
-                          <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                          <XAxis type="number" tick={{ fontSize: 11 }} domain={[0, 'dataMax + 2']} />
+                          <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="hsl(var(--border))" opacity={0.5} />
+                          <XAxis
+                            type="number"
+                            allowDecimals={false}
+                            domain={[0, (max: number) => Math.max(max + 1, 4)]}
+                            tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+                          />
                           <YAxis
                             type="category"
                             dataKey="name"
-                            width={110}
-                            tick={{ fontSize: 10 }}
+                            width={115}
+                            tick={{ fontSize: 11, fill: 'hsl(var(--foreground))' }}
                             tickFormatter={(v) => (v.length > 16 ? `${v.substring(0, 16)}...` : v)}
                           />
                           <Tooltip
-                            formatter={(value: any, name: any, item: any) => [
+                            formatter={(value: any, _, item: any) => [
                               `${value} votos (${item?.payload?.percentage}%)`,
                               'Preferencia',
                             ]}
                             contentStyle={{
                               backgroundColor: 'hsl(var(--card))',
                               borderColor: 'hsl(var(--border))',
-                              borderRadius: '8px',
+                              borderRadius: '12px',
+                              boxShadow: '0 4px 20px -2px rgba(0,0,0,0.1)',
                             }}
                           />
-                          <Bar dataKey="count" fill="#e11d48" radius={[0, 4, 4, 0]}>
+                          <Bar dataKey="count" maxBarSize={16} radius={[0, 6, 6, 0]}>
                             {(stats?.mayorCandidateStats || []).map((_, idx) => (
                               <Cell key={`cell-${idx}`} fill={PALETTE[idx % PALETTE.length]} />
                             ))}
@@ -579,80 +696,112 @@ export default function SurveyManager() {
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
-                  </CardContent>
+                  )}
                 </Card>
 
                 {/* Calificación Gestión Alcaldía */}
-                <Card className="rounded-2xl shadow-sm">
-                  <CardHeader>
-                    <CardTitle className="text-base flex items-center justify-between">
-                      <span>Calificación de la Gestión de la Alcaldía</span>
-                      <Badge variant="outline" className="text-xs font-normal">
+                <Card className="lg:col-span-5 rounded-3xl shadow-sm border p-6 sm:p-7 space-y-5">
+                  <div className="border-b pb-4 space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs font-semibold bg-amber-500/10 text-amber-600 border-0 px-2 py-0.5">
                         P8 del Sondeo
                       </Badge>
-                    </CardTitle>
-                    <CardDescription className="text-xs">
-                      Percepción ciudadana sobre la actual Alcaldía de Ibagué
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-80 w-full">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart
-                          data={stats?.managementStats || []}
-                          margin={{ top: 15, right: 15, left: -15, bottom: 25 }}
-                        >
-                          <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                          <XAxis
-                            dataKey="name"
-                            tick={{ fontSize: 10 }}
-                            angle={-15}
-                            textAnchor="end"
-                          />
-                          <YAxis tick={{ fontSize: 11 }} />
-                          <Tooltip
-                            formatter={(val: any, _, item: any) => [
-                              `${val} respuestas (${item?.payload?.percentage}%)`,
-                              'Opinión',
-                            ]}
-                            contentStyle={{
-                              backgroundColor: 'hsl(var(--card))',
-                              borderColor: 'hsl(var(--border))',
-                              borderRadius: '8px',
-                            }}
-                          />
-                          <Bar dataKey="count" radius={[4, 4, 0, 0]}>
-                            {(stats?.managementStats || []).map((entry, idx) => (
-                              <Cell
-                                key={`cell-${idx}`}
-                                fill={RATING_COLORS[entry.name] || PALETTE[idx % PALETTE.length]}
-                              />
-                            ))}
-                          </Bar>
-                        </BarChart>
-                      </ResponsiveContainer>
+                      <span className="text-xs text-muted-foreground font-medium">Evaluación Institucional</span>
                     </div>
-                  </CardContent>
+                    <h3 className="text-lg font-bold tracking-tight">Calificación de la Gestión</h3>
+                    <p className="text-xs text-muted-foreground">Percepción ciudadana sobre la actual Alcaldía de Ibagué</p>
+                  </div>
+
+                  <div className="h-72 w-full pt-1">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        data={stats?.managementStats || []}
+                        margin={{ top: 20, right: 15, left: -20, bottom: 25 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.5} />
+                        <XAxis
+                          dataKey="name"
+                          tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
+                          angle={-20}
+                          textAnchor="end"
+                          interval={0}
+                        />
+                        <YAxis
+                          allowDecimals={false}
+                          domain={[0, (max: number) => Math.max(max + 1, 4)]}
+                          tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+                        />
+                        <Tooltip
+                          formatter={(val: any, _, item: any) => [
+                            `${val} respuestas (${item?.payload?.percentage}%)`,
+                            'Calificación',
+                          ]}
+                          contentStyle={{
+                            backgroundColor: 'hsl(var(--card))',
+                            borderColor: 'hsl(var(--border))',
+                            borderRadius: '12px',
+                            boxShadow: '0 4px 20px -2px rgba(0,0,0,0.1)',
+                          }}
+                        />
+                        <Bar dataKey="count" maxBarSize={34} radius={[6, 6, 0, 0]}>
+                          {(stats?.managementStats || []).map((entry, idx) => (
+                            <Cell
+                              key={`cell-${idx}`}
+                              fill={RATING_COLORS[entry.name] || PALETTE[idx % PALETTE.length]}
+                            />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  {/* Resumen ejecutivo de aprobación */}
+                  <div className="grid grid-cols-3 gap-2.5 pt-3 border-t text-center">
+                    <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 space-y-0.5">
+                      <span className="text-[10px] uppercase font-bold text-emerald-700 dark:text-emerald-400 block tracking-wider">
+                        Positiva
+                      </span>
+                      <span className="text-base font-extrabold text-emerald-600">
+                        {positiveRatingPct}%
+                      </span>
+                    </div>
+                    <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 space-y-0.5">
+                      <span className="text-[10px] uppercase font-bold text-amber-700 dark:text-amber-400 block tracking-wider">
+                        Regular
+                      </span>
+                      <span className="text-base font-extrabold text-amber-600">
+                        {regularRatingPct}%
+                      </span>
+                    </div>
+                    <div className="p-3 rounded-2xl bg-rose-500/10 border border-rose-500/20 space-y-0.5">
+                      <span className="text-[10px] uppercase font-bold text-rose-700 dark:text-rose-400 block tracking-wider">
+                        Negativa
+                      </span>
+                      <span className="text-base font-extrabold text-rose-600">
+                        {negativeRatingPct}%
+                      </span>
+                    </div>
+                  </div>
                 </Card>
               </div>
 
               {/* Row 2: Rumbo de la Ciudad & Principal Problema */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 {/* Rumbo de la Ciudad */}
-                <Card className="rounded-2xl shadow-sm">
-                  <CardHeader>
-                    <CardTitle className="text-base flex items-center justify-between">
-                      <span>Rumbo General de Ibagué</span>
-                      <Badge variant="outline" className="text-xs font-normal">
+                <Card className="lg:col-span-5 rounded-3xl shadow-sm border p-6 sm:p-7 space-y-5">
+                  <div className="border-b pb-4 space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs font-semibold bg-blue-500/10 text-blue-600 border-0 px-2 py-0.5">
                         P6 del Sondeo
                       </Badge>
-                    </CardTitle>
-                    <CardDescription className="text-xs">
-                      ¿Va por buen o por mal camino?
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-80 w-full flex items-center justify-center">
+                      <span className="text-xs text-muted-foreground font-medium">Clima de Opinión</span>
+                    </div>
+                    <h3 className="text-lg font-bold tracking-tight">Rumbo General de Ibagué</h3>
+                    <p className="text-xs text-muted-foreground">¿Considera que la ciudad va por buen o por mal camino?</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+                    <div className="sm:col-span-7 h-64 w-full">
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                           <Pie
@@ -661,10 +810,9 @@ export default function SurveyManager() {
                             nameKey="name"
                             cx="50%"
                             cy="50%"
-                            innerRadius={65}
-                            outerRadius={95}
-                            paddingAngle={4}
-                            label={({ name, percentage }) => `${name}: ${percentage}%`}
+                            innerRadius={58}
+                            outerRadius={88}
+                            paddingAngle={3}
                           >
                             {(stats?.cityTrackStats || []).map((entry) => (
                               <Cell
@@ -675,184 +823,228 @@ export default function SurveyManager() {
                           </Pie>
                           <Tooltip
                             formatter={(val: any, _, item: any) => [
-                              `${val} respuestas (${item?.payload?.percentage}%)`,
+                              `${val} votos (${item?.payload?.percentage}%)`,
                               'Percepción',
                             ]}
                             contentStyle={{
                               backgroundColor: 'hsl(var(--card))',
                               borderColor: 'hsl(var(--border))',
-                              borderRadius: '8px',
+                              borderRadius: '12px',
+                              boxShadow: '0 4px 20px -2px rgba(0,0,0,0.1)',
                             }}
                           />
-                          <Legend verticalAlign="bottom" height={36} />
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
-                  </CardContent>
+
+                    <div className="sm:col-span-5 space-y-2">
+                      {(stats?.cityTrackStats || []).map((t) => (
+                        <div
+                          key={t.name}
+                          className="p-2.5 rounded-xl border bg-muted/10 space-y-1"
+                        >
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="font-semibold text-foreground flex items-center gap-1.5 truncate">
+                              <span
+                                className="w-2.5 h-2.5 rounded-full shrink-0"
+                                style={{ backgroundColor: TRACK_COLORS[t.name] || '#94a3b8' }}
+                              />
+                              <span className="truncate">{t.name}</span>
+                            </span>
+                            <span className="font-bold">{t.percentage}%</span>
+                          </div>
+                          <div className="text-[11px] text-muted-foreground flex justify-between">
+                            <span>{t.count} {t.count === 1 ? 'voto' : 'votos'}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </Card>
 
                 {/* Principal Problema */}
-                <Card className="rounded-2xl shadow-sm">
-                  <CardHeader>
-                    <CardTitle className="text-base flex items-center justify-between">
-                      <span>Principal Problema de Ibagué</span>
-                      <Badge variant="outline" className="text-xs font-normal">
+                <Card className="lg:col-span-7 rounded-3xl shadow-sm border p-6 sm:p-7 space-y-5">
+                  <div className="border-b pb-4 space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs font-semibold bg-rose-500/10 text-rose-600 border-0 px-2 py-0.5">
                         P7 del Sondeo
                       </Badge>
-                    </CardTitle>
-                    <CardDescription className="text-xs">
-                      Problemática más urgente identificada por los ciudadanos
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-80 w-full">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart
-                          data={stats?.mainProblemStats || []}
-                          margin={{ top: 15, right: 10, left: -20, bottom: 40 }}
-                        >
-                          <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                          <XAxis
-                            dataKey="name"
-                            tick={{ fontSize: 9 }}
-                            angle={-35}
-                            textAnchor="end"
-                            interval={0}
-                          />
-                          <YAxis tick={{ fontSize: 11 }} />
-                          <Tooltip
-                            formatter={(val: any, _, item: any) => [
-                              `${val} respuestas (${item?.payload?.percentage}%)`,
-                              'Problemática',
-                            ]}
-                            contentStyle={{
-                              backgroundColor: 'hsl(var(--card))',
-                              borderColor: 'hsl(var(--border))',
-                              borderRadius: '8px',
-                            }}
-                          />
-                          <Bar dataKey="count" fill="#dc2626" radius={[4, 4, 0, 0]}>
-                            {(stats?.mainProblemStats || []).map((_, idx) => (
-                              <Cell key={`cell-prob-${idx}`} fill={PALETTE[idx % PALETTE.length]} />
-                            ))}
-                          </Bar>
-                        </BarChart>
-                      </ResponsiveContainer>
+                      <span className="text-xs text-muted-foreground font-medium">Diagnóstico de Urgencias</span>
                     </div>
-                  </CardContent>
+                    <h3 className="text-lg font-bold tracking-tight">Principal Problema de Ibagué</h3>
+                    <p className="text-xs text-muted-foreground">Problemática más urgente identificada por los ciudadanos</p>
+                  </div>
+
+                  <div className="h-80 w-full pt-1">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        layout="vertical"
+                        data={stats?.mainProblemStats?.slice(0, 8) || []}
+                        margin={{ top: 5, right: 35, left: 10, bottom: 5 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="hsl(var(--border))" opacity={0.5} />
+                        <XAxis
+                          type="number"
+                          allowDecimals={false}
+                          domain={[0, (max: number) => Math.max(max + 1, 4)]}
+                          tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+                        />
+                        <YAxis
+                          type="category"
+                          dataKey="name"
+                          width={130}
+                          tick={{ fontSize: 11, fill: 'hsl(var(--foreground))' }}
+                          tickFormatter={(v) => (v.length > 18 ? `${v.substring(0, 18)}...` : v)}
+                        />
+                        <Tooltip
+                          formatter={(val: any, _, item: any) => [
+                            `${val} respuestas (${item?.payload?.percentage}%)`,
+                            'Problemática',
+                          ]}
+                          contentStyle={{
+                            backgroundColor: 'hsl(var(--card))',
+                            borderColor: 'hsl(var(--border))',
+                            borderRadius: '12px',
+                            boxShadow: '0 4px 20px -2px rgba(0,0,0,0.1)',
+                          }}
+                        />
+                        <Bar dataKey="count" maxBarSize={16} radius={[0, 6, 6, 0]}>
+                          {(stats?.mainProblemStats || []).map((_, idx) => (
+                            <Cell key={`cell-prob-${idx}`} fill={PALETTE[idx % PALETTE.length]} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
                 </Card>
               </div>
 
               {/* Row 3: Temas Prioritarios & Evolución Diaria */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
                 {/* Temas Prioritarios */}
-                <Card className="rounded-2xl shadow-sm">
-                  <CardHeader>
-                    <CardTitle className="text-base flex items-center justify-between">
-                      <span>Temas que Debería Priorizar el Alcalde</span>
-                      <Badge variant="outline" className="text-xs font-normal">
-                        P10 (Máx. 2 temas)
+                <Card className="rounded-3xl shadow-sm border p-6 sm:p-7 space-y-5">
+                  <div className="border-b pb-4 space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs font-semibold bg-indigo-500/10 text-indigo-600 border-0 px-2 py-0.5">
+                        P10 del Sondeo
                       </Badge>
-                    </CardTitle>
-                    <CardDescription className="text-xs">
-                      Áreas prioritarias demandadas por la ciudadanía
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-80 w-full">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart
-                          layout="vertical"
-                          data={stats?.priorityTopicsStats || []}
-                          margin={{ top: 5, right: 30, left: 40, bottom: 5 }}
-                        >
-                          <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                          <XAxis type="number" tick={{ fontSize: 11 }} />
-                          <YAxis
-                            type="category"
-                            dataKey="name"
-                            width={110}
-                            tick={{ fontSize: 10 }}
-                          />
-                          <Tooltip
-                            formatter={(val: any, _, item: any) => [
-                              `${val} menciones (${item?.payload?.percentage}% de encuestados)`,
-                              'Tema prioritario',
-                            ]}
-                            contentStyle={{
-                              backgroundColor: 'hsl(var(--card))',
-                              borderColor: 'hsl(var(--border))',
-                              borderRadius: '8px',
-                            }}
-                          />
-                          <Bar dataKey="count" fill="#2563eb" radius={[0, 4, 4, 0]} />
-                        </BarChart>
-                      </ResponsiveContainer>
+                      <span className="text-xs text-muted-foreground font-medium">Prioridades de Acción</span>
                     </div>
-                  </CardContent>
+                    <h3 className="text-lg font-bold tracking-tight">Temas que Debería Priorizar el Alcalde</h3>
+                    <p className="text-xs text-muted-foreground">Demandas ciudadanas de intervención inmediata</p>
+                  </div>
+
+                  <div className="h-80 w-full pt-1">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        layout="vertical"
+                        data={stats?.priorityTopicsStats?.slice(0, 8) || []}
+                        margin={{ top: 5, right: 35, left: 10, bottom: 5 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="hsl(var(--border))" opacity={0.5} />
+                        <XAxis
+                          type="number"
+                          allowDecimals={false}
+                          domain={[0, (max: number) => Math.max(max + 1, 4)]}
+                          tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+                        />
+                        <YAxis
+                          type="category"
+                          dataKey="name"
+                          width={130}
+                          tick={{ fontSize: 11, fill: 'hsl(var(--foreground))' }}
+                          tickFormatter={(v) => (v.length > 18 ? `${v.substring(0, 18)}...` : v)}
+                        />
+                        <Tooltip
+                          formatter={(val: any, _, item: any) => [
+                            `${val} menciones (${item?.payload?.percentage}% de participantes)`,
+                            'Tema Prioritario',
+                          ]}
+                          contentStyle={{
+                            backgroundColor: 'hsl(var(--card))',
+                            borderColor: 'hsl(var(--border))',
+                            borderRadius: '12px',
+                            boxShadow: '0 4px 20px -2px rgba(0,0,0,0.1)',
+                          }}
+                        />
+                        <Bar dataKey="count" fill="#2563eb" maxBarSize={16} radius={[0, 6, 6, 0]}>
+                          {(stats?.priorityTopicsStats || []).map((_, idx) => (
+                            <Cell key={`cell-prio-${idx}`} fill={PALETTE[(idx + 2) % PALETTE.length]} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
                 </Card>
 
                 {/* Tendencia de Respuestas por Día */}
-                <Card className="rounded-2xl shadow-sm">
-                  <CardHeader>
-                    <CardTitle className="text-base flex items-center justify-between">
-                      <span>Participación por Día (Últimos 14 días)</span>
-                      <Badge variant="outline" className="text-xs font-normal">
-                        Evolución
+                <Card className="rounded-3xl shadow-sm border p-6 sm:p-7 space-y-5">
+                  <div className="border-b pb-4 space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs font-semibold bg-emerald-500/10 text-emerald-600 border-0 px-2 py-0.5">
+                        Evolución Temporal
                       </Badge>
-                    </CardTitle>
-                    <CardDescription className="text-xs">
-                      Volumen de encuestas diligenciadas por fecha
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-80 w-full">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart
-                          data={stats?.dailyTrend || []}
-                          margin={{ top: 15, right: 15, left: -20, bottom: 20 }}
-                        >
-                          <defs>
-                            <linearGradient id="colorRespuestas" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor="#e11d48" stopOpacity={0.8} />
-                              <stop offset="95%" stopColor="#e11d48" stopOpacity={0} />
-                            </linearGradient>
-                          </defs>
-                          <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                          <XAxis dataKey="date" tick={{ fontSize: 10 }} />
-                          <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
-                          <Tooltip
-                            formatter={(val: any) => [`${val} respuestas`, 'Volumen']}
-                            contentStyle={{
-                              backgroundColor: 'hsl(var(--card))',
-                              borderColor: 'hsl(var(--border))',
-                              borderRadius: '8px',
-                            }}
-                          />
-                          <Area
-                            type="monotone"
-                            dataKey="respuestas"
-                            stroke="#e11d48"
-                            strokeWidth={2}
-                            fillOpacity={1}
-                            fill="url(#colorRespuestas)"
-                          />
-                        </AreaChart>
-                      </ResponsiveContainer>
+                      <span className="text-xs text-muted-foreground font-medium">Últimos 14 días</span>
                     </div>
-                  </CardContent>
+                    <h3 className="text-lg font-bold tracking-tight">Participación Diaria</h3>
+                    <p className="text-xs text-muted-foreground">Volumen de encuestas diligenciadas por fecha</p>
+                  </div>
+
+                  <div className="h-80 w-full pt-1">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart
+                        data={stats?.dailyTrend || []}
+                        margin={{ top: 15, right: 15, left: -20, bottom: 20 }}
+                      >
+                        <defs>
+                          <linearGradient id="colorRespuestas" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#e11d48" stopOpacity={0.7} />
+                            <stop offset="95%" stopColor="#e11d48" stopOpacity={0.05} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.5} />
+                        <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
+                        <YAxis tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} allowDecimals={false} domain={[0, (max: number) => Math.max(max + 1, 4)]} />
+                        <Tooltip
+                          formatter={(val: any) => [`${val} respuestas`, 'Volumen']}
+                          contentStyle={{
+                            backgroundColor: 'hsl(var(--card))',
+                            borderColor: 'hsl(var(--border))',
+                            borderRadius: '12px',
+                            boxShadow: '0 4px 20px -2px rgba(0,0,0,0.1)',
+                          }}
+                        />
+                        <Area
+                          type="monotone"
+                          dataKey="respuestas"
+                          stroke="#e11d48"
+                          strokeWidth={2.5}
+                          fillOpacity={1}
+                          fill="url(#colorRespuestas)"
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
                 </Card>
               </div>
 
               {/* Row 4: Demografía (Sexo, Edad, Estrato) */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Sexo */}
-                <Card className="rounded-2xl shadow-sm">
-                  <CardHeader>
-                    <CardTitle className="text-sm font-semibold">Distribución por Sexo</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-56 w-full">
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs font-semibold bg-primary/10 text-primary border-0 px-2.5 py-0.5">
+                    Perfil Demográfico
+                  </Badge>
+                  <h4 className="text-base font-bold text-foreground">Composición de la Muestra</h4>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* Sexo */}
+                  <Card className="rounded-3xl shadow-sm border p-6 space-y-4">
+                    <div className="border-b pb-3">
+                      <h4 className="text-sm font-bold">Distribución por Género</h4>
+                      <p className="text-[11px] text-muted-foreground">Proporción de participantes</p>
+                    </div>
+                    <div className="h-60 w-full">
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                           <Pie
@@ -862,7 +1054,8 @@ export default function SurveyManager() {
                             cx="50%"
                             cy="50%"
                             innerRadius={45}
-                            outerRadius={70}
+                            outerRadius={75}
+                            paddingAngle={3}
                             label={({ name, percentage }) => `${name} (${percentage}%)`}
                           >
                             {(stats?.genderStats || []).map((_, idx) => (
@@ -873,30 +1066,29 @@ export default function SurveyManager() {
                             contentStyle={{
                               backgroundColor: 'hsl(var(--card))',
                               borderColor: 'hsl(var(--border))',
-                              borderRadius: '8px',
+                              borderRadius: '12px',
                             }}
                           />
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
-                  </CardContent>
-                </Card>
+                  </Card>
 
-                {/* Edad */}
-                <Card className="rounded-2xl shadow-sm">
-                  <CardHeader>
-                    <CardTitle className="text-sm font-semibold">Grupos de Edad</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-56 w-full">
+                  {/* Edad */}
+                  <Card className="rounded-3xl shadow-sm border p-6 space-y-4">
+                    <div className="border-b pb-3">
+                      <h4 className="text-sm font-bold">Grupos de Edad</h4>
+                      <p className="text-[11px] text-muted-foreground">Rango etario de encuestados</p>
+                    </div>
+                    <div className="h-60 w-full">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart
                           data={stats?.ageRangeStats || []}
-                          margin={{ top: 10, right: 10, left: -25, bottom: 20 }}
+                          margin={{ top: 10, right: 10, left: -25, bottom: 25 }}
                         >
-                          <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                          <XAxis dataKey="name" tick={{ fontSize: 9 }} angle={-20} textAnchor="end" />
-                          <YAxis tick={{ fontSize: 10 }} />
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.5} />
+                          <XAxis dataKey="name" tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))' }} angle={-25} textAnchor="end" interval={0} />
+                          <YAxis tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} allowDecimals={false} domain={[0, (max: number) => Math.max(max + 1, 4)]} />
                           <Tooltip
                             formatter={(v: any, _, item: any) => [
                               `${v} (${item?.payload?.percentage}%)`,
@@ -905,31 +1097,30 @@ export default function SurveyManager() {
                             contentStyle={{
                               backgroundColor: 'hsl(var(--card))',
                               borderColor: 'hsl(var(--border))',
-                              borderRadius: '8px',
+                              borderRadius: '12px',
                             }}
                           />
-                          <Bar dataKey="count" fill="#4f46e5" radius={[4, 4, 0, 0]} />
+                          <Bar dataKey="count" fill="#4f46e5" maxBarSize={22} radius={[6, 6, 0, 0]} />
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
-                  </CardContent>
-                </Card>
+                  </Card>
 
-                {/* Estrato */}
-                <Card className="rounded-2xl shadow-sm">
-                  <CardHeader>
-                    <CardTitle className="text-sm font-semibold">Estrato Socioeconómico</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-56 w-full">
+                  {/* Estrato */}
+                  <Card className="rounded-3xl shadow-sm border p-6 space-y-4">
+                    <div className="border-b pb-3">
+                      <h4 className="text-sm font-bold">Estrato Socioeconómico</h4>
+                      <p className="text-[11px] text-muted-foreground">Nivel socioeconómico reportado</p>
+                    </div>
+                    <div className="h-60 w-full">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart
                           data={stats?.stratumStats || []}
-                          margin={{ top: 10, right: 10, left: -25, bottom: 20 }}
+                          margin={{ top: 10, right: 10, left: -25, bottom: 25 }}
                         >
-                          <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                          <XAxis dataKey="name" tick={{ fontSize: 9 }} angle={-20} textAnchor="end" />
-                          <YAxis tick={{ fontSize: 10 }} />
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.5} />
+                          <XAxis dataKey="name" tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))' }} angle={-25} textAnchor="end" interval={0} />
+                          <YAxis tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} allowDecimals={false} domain={[0, (max: number) => Math.max(max + 1, 4)]} />
                           <Tooltip
                             formatter={(v: any, _, item: any) => [
                               `${v} (${item?.payload?.percentage}%)`,
@@ -938,48 +1129,53 @@ export default function SurveyManager() {
                             contentStyle={{
                               backgroundColor: 'hsl(var(--card))',
                               borderColor: 'hsl(var(--border))',
-                              borderRadius: '8px',
+                              borderRadius: '12px',
                             }}
                           />
-                          <Bar dataKey="count" fill="#0891b2" radius={[4, 4, 0, 0]} />
+                          <Bar dataKey="count" fill="#0891b2" maxBarSize={20} radius={[6, 6, 0, 0]} />
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
-                  </CardContent>
-                </Card>
+                  </Card>
+                </div>
               </div>
 
               {/* Row 5: Top Comunas y Barrios */}
-              <Card className="rounded-2xl shadow-sm">
-                <CardHeader>
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-primary" />
-                    Barrios y Comunas con Mayor Participación
-                  </CardTitle>
-                  <CardDescription className="text-xs">
-                    Lugares de residencia más frecuentes mencionados por los participantes
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-                    {(stats?.topNeighborhoods || []).map((item, idx) => (
-                      <div
-                        key={idx}
-                        className="p-3 rounded-xl border bg-muted/20 flex flex-col justify-between"
-                      >
-                        <span className="text-xs font-semibold truncate" title={item.name}>
-                          {item.name}
-                        </span>
-                        <div className="flex items-center justify-between mt-2 pt-1 border-t text-[11px] text-muted-foreground">
-                          <span>Respuestas:</span>
-                          <Badge variant="secondary" className="text-[10px] px-1.5 py-0 font-bold">
-                            {item.count}
-                          </Badge>
-                        </div>
-                      </div>
-                    ))}
+              <Card className="rounded-3xl shadow-sm border p-6 sm:p-7 space-y-5">
+                <div className="border-b pb-4 space-y-1">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="text-xs font-semibold bg-emerald-500/10 text-emerald-600 border-0 px-2 py-0.5">
+                      Territorio
+                    </Badge>
+                    <span className="text-xs text-muted-foreground font-medium">Ubicación Geográfica</span>
                   </div>
-                </CardContent>
+                  <h3 className="text-lg font-bold tracking-tight flex items-center gap-2">
+                    <MapPin className="h-5 w-5 text-rose-600" />
+                    Barrios y Comunas con Mayor Participación
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    Sectores residenciales más activos en la encuesta
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3.5">
+                  {(stats?.topNeighborhoods || []).map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="p-3.5 rounded-2xl border bg-muted/15 hover:bg-muted/30 transition-colors flex flex-col justify-between space-y-2"
+                    >
+                      <span className="text-xs font-bold truncate text-foreground" title={item.name}>
+                        {item.name}
+                      </span>
+                      <div className="flex items-center justify-between pt-1.5 border-t text-[11px] text-muted-foreground">
+                        <span>Respuestas</span>
+                        <Badge variant="secondary" className="text-[11px] px-2 py-0 font-bold bg-primary/10 text-primary">
+                          {item.count}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </Card>
             </div>
           )}

@@ -58,12 +58,103 @@ export async function GET() {
       }))
       .sort((a, b) => b.count - a.count);
 
-    // Grouping by standard order or descending
-    const cityTrackStats = groupBy("cityTrack");
-    const managementStats = groupBy("managementRating");
-    const mayorCandidateStats = groupBy("mayorCandidate").sort((a, b) => b.count - a.count);
-    const mainProblemStats = groupBy("mainProblem").sort((a, b) => b.count - a.count);
-    const genderStats = groupBy("gender");
+    // Standard management rating
+    const managementOrder = ["Muy buena", "Buena", "Regular", "Mala", "Muy mala", "No sabe/No responde"];
+    const rawManagement = groupBy("managementRating");
+    const managementStats = managementOrder.map((rating) => {
+      const found = rawManagement.find((m) => m.name.toLowerCase() === rating.toLowerCase());
+      return {
+        name: rating,
+        count: found ? found.count : 0,
+        percentage: found ? found.percentage : 0,
+      };
+    });
+
+    // Standard city track
+    const trackOrder = ["Buen camino", "Mal camino", "No sabe/No responde"];
+    const rawTrack = groupBy("cityTrack");
+    const cityTrackStats = trackOrder.map((track) => {
+      const found = rawTrack.find((t) => t.name.toLowerCase() === track.toLowerCase());
+      return {
+        name: track,
+        count: found ? found.count : 0,
+        percentage: found ? found.percentage : 0,
+      };
+    });
+
+    // Standard mayor candidates
+    const allCandidates = [
+      "Jorge Bolívar",
+      "Harold Urrea",
+      "Felipe Ferro",
+      "Cristian Ávila",
+      "Óscar Berbeo",
+      "William Rosas",
+      "Ninguno de ellos",
+      "Votaría en blanco",
+      "No sabe/No responde",
+    ];
+    const rawCandidates = groupBy("mayorCandidate");
+    const seenCandidates = new Set<string>();
+    const mayorCandidateStats: { name: string; count: number; percentage: number }[] = [];
+    for (const c of allCandidates) {
+      const found = rawCandidates.find((item) => item.name.toLowerCase() === c.toLowerCase());
+      mayorCandidateStats.push({
+        name: c,
+        count: found ? found.count : 0,
+        percentage: found ? found.percentage : 0,
+      });
+      seenCandidates.add(c.toLowerCase());
+    }
+    for (const item of rawCandidates) {
+      if (!seenCandidates.has(item.name.toLowerCase())) {
+        mayorCandidateStats.push(item);
+      }
+    }
+    mayorCandidateStats.sort((a, b) => b.count - a.count);
+
+    // Standard main problem
+    const allProblems = [
+      "Movilidad y transporte",
+      "Seguridad",
+      "Empleo",
+      "Servicios públicos",
+      "Corrupción",
+      "Salud",
+      "Educación",
+      "Otro",
+      "No sabe/No responde",
+    ];
+    const rawProblems = groupBy("mainProblem");
+    const seenProblems = new Set<string>();
+    const mainProblemStats: { name: string; count: number; percentage: number }[] = [];
+    for (const p of allProblems) {
+      const found = rawProblems.find((item) => item.name.toLowerCase() === p.toLowerCase());
+      mainProblemStats.push({
+        name: p,
+        count: found ? found.count : 0,
+        percentage: found ? found.percentage : 0,
+      });
+      seenProblems.add(p.toLowerCase());
+    }
+    for (const item of rawProblems) {
+      if (!seenProblems.has(item.name.toLowerCase())) {
+        mainProblemStats.push(item);
+      }
+    }
+    mainProblemStats.sort((a, b) => b.count - a.count);
+
+    // Standard gender
+    const genderOrder = ["Hombre", "Mujer", "Otro"];
+    const rawGender = groupBy("gender");
+    const genderStats = genderOrder.map((g) => {
+      const found = rawGender.find((item) => item.name.toLowerCase() === g.toLowerCase());
+      return {
+        name: g,
+        count: found ? found.count : 0,
+        percentage: found ? found.percentage : 0,
+      };
+    });
 
     // Standard age ordering
     const ageOrder = ["18-25", "26-35", "36-45", "46-55", "56-65", "66 o más"];

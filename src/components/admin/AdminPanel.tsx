@@ -267,7 +267,7 @@ export default function AdminPanel({ session, onLogout }: AdminPanelProps) {
         </header>
 
         {/* Page Content */}
-        <div className="flex-1 overflow-y-auto p-4 lg:p-6">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-slate-50/50 dark:bg-zinc-950/40">
           {renderContent()}
         </div>
       </main>
