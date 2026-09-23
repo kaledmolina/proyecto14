@@ -43,6 +43,7 @@ export async function GET() {
         "N°": index + 1,
         "ID Respuesta": r.id,
         "Fecha y Hora": formattedDate,
+        "Nombre Completo": r.fullName || "Sin nombre",
         "Mayor de edad y residente en Ibagué": r.isAdultResident,
         "Sexo": r.gender,
         "Rango de Edad": r.ageRange,
@@ -67,6 +68,7 @@ export async function GET() {
       { wch: 6 },  // N°
       { wch: 26 }, // ID
       { wch: 20 }, // Fecha
+      { wch: 28 }, // Nombre Completo
       { wch: 22 }, // Mayor de edad
       { wch: 12 }, // Sexo
       { wch: 14 }, // Edad

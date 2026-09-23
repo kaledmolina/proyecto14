@@ -25,6 +25,7 @@ export async function GET(req: NextRequest) {
     const where: any = {};
     if (search.trim()) {
       where.OR = [
+        { fullName: { contains: search } },
         { neighborhood: { contains: search } },
         { mayorCandidate: { contains: search } },
         { mainProblem: { contains: search } },

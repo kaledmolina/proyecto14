@@ -8,6 +8,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
 
     const {
+      fullName,
       isAdultResident,
       gender,
       ageRange,
@@ -23,6 +24,13 @@ export async function POST(req: NextRequest) {
     } = body;
 
     // Basic validation
+    if (!fullName?.trim()) {
+      return NextResponse.json(
+        { error: "Por favor ingrese su nombre completo." },
+        { status: 400 }
+      );
+    }
+
     if (!isAdultResident) {
       return NextResponse.json(
         { error: "Debe indicar si es mayor de edad y reside en Ibagué" },
@@ -73,6 +81,7 @@ export async function POST(req: NextRequest) {
     const response = await db.surveyResponse.create({
       data: {
         surveyCode: "sondeo_ibague_1",
+        fullName: fullName.trim(),
         isAdultResident,
         gender,
         ageRange,

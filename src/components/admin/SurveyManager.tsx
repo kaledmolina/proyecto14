@@ -109,6 +109,7 @@ interface SurveyStats {
   topNeighborhoods: { name: string; count: number }[]
   openAnswers: {
     id: string
+    fullName?: string
     answer: string
     neighborhood: string
     ageRange: string
@@ -121,6 +122,7 @@ interface SurveyStats {
 interface SurveyResponseRecord {
   id: string
   surveyCode: string
+  fullName: string
   isAdultResident: string
   gender: string
   ageRange: string
@@ -260,6 +262,7 @@ export default function SurveyManager() {
     if (!openAnswerSearch.trim()) return true
     const term = openAnswerSearch.toLowerCase()
     return (
+      (ans.fullName && ans.fullName.toLowerCase().includes(term)) ||
       ans.answer.toLowerCase().includes(term) ||
       ans.neighborhood.toLowerCase().includes(term) ||
       ans.gender.toLowerCase().includes(term)
@@ -970,9 +973,18 @@ export default function SurveyManager() {
                   {filteredOpenAnswers.map((ans) => (
                     <div
                       key={ans.id}
-                      className="p-4 rounded-xl border bg-muted/15 space-y-2 flex flex-col justify-between"
+                      className="p-4 rounded-xl border bg-muted/15 space-y-2.5 flex flex-col justify-between"
                     >
-                      <p className="text-sm font-medium text-foreground leading-relaxed italic">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-foreground flex items-center gap-1.5">
+                          <Users className="h-3.5 w-3.5 text-primary" />
+                          {ans.fullName || 'Ciudadano anónimo'}
+                        </span>
+                        <span className="text-[11px] text-muted-foreground flex items-center gap-1">
+                          <MapPin className="h-3 w-3" /> {ans.neighborhood}
+                        </span>
+                      </div>
+                      <p className="text-sm font-medium text-foreground leading-relaxed italic bg-background/50 p-2.5 rounded-lg border">
                         &quot;{ans.answer}&quot;
                       </p>
                       <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
@@ -1037,6 +1049,7 @@ export default function SurveyManager() {
                     <TableRow>
                       <TableHead className="w-12 text-xs">#</TableHead>
                       <TableHead className="text-xs">Fecha y Hora</TableHead>
+                      <TableHead className="text-xs">Ciudadano / Nombre</TableHead>
                       <TableHead className="text-xs">Barrio / Comuna</TableHead>
                       <TableHead className="text-xs">Perfil</TableHead>
                       <TableHead className="text-xs">Rumbo</TableHead>
@@ -1049,14 +1062,14 @@ export default function SurveyManager() {
                     {loadingResponses ? (
                       Array.from({ length: 5 }).map((_, i) => (
                         <TableRow key={i}>
-                          <TableCell colSpan={8}>
+                          <TableCell colSpan={9}>
                             <Skeleton className="h-8 w-full" />
                           </TableCell>
                         </TableRow>
                       ))
                     ) : responses.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={8} className="text-center py-8 text-sm text-muted-foreground">
+                        <TableCell colSpan={9} className="text-center py-8 text-sm text-muted-foreground">
                           No hay respuestas registradas aún.
                         </TableCell>
                       </TableRow>
@@ -1071,6 +1084,9 @@ export default function SurveyManager() {
                               dateStyle: 'short',
                               timeStyle: 'short',
                             })}
+                          </TableCell>
+                          <TableCell className="text-xs font-bold text-foreground max-w-[140px] truncate">
+                            {r.fullName || 'Anónimo'}
                           </TableCell>
                           <TableCell className="text-xs font-semibold">{r.neighborhood}</TableCell>
                           <TableCell className="text-xs text-muted-foreground">
@@ -1174,6 +1190,12 @@ export default function SurveyManager() {
           {selectedResponse && (
             <div className="space-y-4 pt-2 text-sm">
               <div className="grid grid-cols-2 gap-3 p-3 rounded-xl bg-muted/40 border">
+                <div className="col-span-2 pb-1 border-b">
+                  <span className="text-xs text-muted-foreground block">Nombre Completo:</span>
+                  <span className="text-base font-bold text-primary">
+                    {selectedResponse.fullName || 'No especificado (Anónimo)'}
+                  </span>
+                </div>
                 <div>
                   <span className="text-xs text-muted-foreground block">Mayor de edad y residente:</span>
                   <span className="font-semibold">{selectedResponse.isAdultResident}</span>

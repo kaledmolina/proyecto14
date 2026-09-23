@@ -107,6 +107,7 @@ export async function GET() {
       .filter((r) => r.firstChange && r.firstChange.trim().length > 0)
       .map((r) => ({
         id: r.id,
+        fullName: r.fullName || "Ciudadano",
         answer: r.firstChange!,
         neighborhood: r.neighborhood,
         ageRange: r.ageRange,

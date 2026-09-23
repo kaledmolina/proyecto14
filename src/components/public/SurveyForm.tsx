@@ -23,6 +23,7 @@ import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
 
 interface SurveyFormData {
+  fullName: string
   isAdultResident: string
   gender: string
   ageRange: string
@@ -38,6 +39,7 @@ interface SurveyFormData {
 }
 
 const initialFormData: SurveyFormData = {
+  fullName: '',
   isAdultResident: '',
   gender: '',
   ageRange: '',
@@ -106,6 +108,7 @@ export function SurveyForm({ onBackToHome }: { onBackToHome?: () => void }) {
   // Calculate progress
   const answeredCount = useMemo(() => {
     let count = 0
+    if (formData.fullName.trim()) count++
     if (formData.isAdultResident) count++
     if (formData.gender) count++
     if (formData.ageRange) count++
@@ -120,7 +123,7 @@ export function SurveyForm({ onBackToHome }: { onBackToHome?: () => void }) {
     return count
   }, [formData])
 
-  const progressPercent = Math.min(100, Math.round((answeredCount / 11) * 100))
+  const progressPercent = Math.min(100, Math.round((answeredCount / 12) * 100))
 
   const handlePriorityTopicToggle = (topic: string) => {
     setFormData((prev) => {
@@ -145,6 +148,7 @@ export function SurveyForm({ onBackToHome }: { onBackToHome?: () => void }) {
 
   const validate = () => {
     const errors: Record<string, string> = {}
+    if (!formData.fullName.trim()) errors.fullName = 'Por favor ingrese su nombre completo.'
     if (!formData.isAdultResident) errors.isAdultResident = 'Esta pregunta es obligatoria.'
     if (formData.isAdultResident === 'No') {
       errors.isAdultResident = 'Debe ser mayor de edad y residir en Ibagué para participar.'
@@ -314,6 +318,37 @@ export function SurveyForm({ onBackToHome }: { onBackToHome?: () => void }) {
           </motion.div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Nombre Completo */}
+            <div
+              className={`bg-card rounded-2xl border p-5 sm:p-6 shadow-sm transition-all duration-200 ${
+                validationErrors.fullName ? 'border-destructive ring-1 ring-destructive' : ''
+              }`}
+            >
+              <div className="space-y-3">
+                <Label className="text-base font-semibold leading-snug" htmlFor="fullName">
+                  Nombre completo <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="fullName"
+                  value={formData.fullName}
+                  onChange={(e) => {
+                    setFormData({ ...formData, fullName: e.target.value })
+                    if (validationErrors.fullName) {
+                      setValidationErrors((p) => ({ ...p, fullName: '' }))
+                    }
+                  }}
+                  placeholder="Escriba sus nombres y apellidos..."
+                  className="rounded-xl"
+                  autoComplete="name"
+                />
+                {validationErrors.fullName && (
+                  <p className="text-xs text-destructive flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" /> {validationErrors.fullName}
+                  </p>
+                )}
+              </div>
+            </div>
+
             {/* P1: Mayor de edad y residente */}
             <div
               className={`bg-card rounded-2xl border p-5 sm:p-6 shadow-sm transition-all duration-200 ${

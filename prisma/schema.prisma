@@ -159,6 +159,7 @@ model SiteSettings {
 model SurveyResponse {
   id               String   @id @default(cuid())
   surveyCode       String   @default("sondeo_ibague_1")
+  fullName         String   @default("") // Nombre completo del encuestado
   isAdultResident  String   // "Sí" | "No"
   gender           String   // "Hombre" | "Mujer" | "Otro"
   ageRange         String   // "18-25" | "26-35" | "36-45" | "46-55" | "56-65" | "66 o más"
