@@ -17,6 +17,7 @@ import {
   Copy,
   Check,
   MessageCircle,
+  Shield,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -27,7 +28,6 @@ import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
 
 interface SurveyFormData {
-  fullName: string
   isAdultResident: string
   gender: string
   ageRange: string
@@ -43,7 +43,6 @@ interface SurveyFormData {
 }
 
 const initialFormData: SurveyFormData = {
-  fullName: '',
   isAdultResident: '',
   gender: '',
   ageRange: '',
@@ -112,7 +111,6 @@ export function SurveyForm({ onBackToHome }: { onBackToHome?: () => void }) {
   // Calculate progress
   const answeredCount = useMemo(() => {
     let count = 0
-    if (formData.fullName.trim()) count++
     if (formData.isAdultResident) count++
     if (formData.gender) count++
     if (formData.ageRange) count++
@@ -127,7 +125,7 @@ export function SurveyForm({ onBackToHome }: { onBackToHome?: () => void }) {
     return count
   }, [formData])
 
-  const progressPercent = Math.min(100, Math.round((answeredCount / 12) * 100))
+  const progressPercent = Math.min(100, Math.round((answeredCount / 11) * 100))
 
   const handlePriorityTopicToggle = (topic: string) => {
     setFormData((prev) => {
@@ -152,7 +150,6 @@ export function SurveyForm({ onBackToHome }: { onBackToHome?: () => void }) {
 
   const validate = () => {
     const errors: Record<string, string> = {}
-    if (!formData.fullName.trim()) errors.fullName = 'Por favor ingrese su nombre completo.'
     if (!formData.isAdultResident) errors.isAdultResident = 'Esta pregunta es obligatoria.'
     if (formData.isAdultResident === 'No') {
       errors.isAdultResident = 'Debe ser mayor de edad y residir en Ibagué para participar.'
@@ -353,6 +350,13 @@ export function SurveyForm({ onBackToHome }: { onBackToHome?: () => void }) {
               y se procesarán de manera agregada para estudios estadísticos.
             </p>
 
+            <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-xs font-medium">
+              <Shield className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+              <span>
+                <strong>Sondeo 100% Anónimo:</strong> No se recopilan nombres ni datos de identificación personal.
+              </span>
+            </div>
+
             <div className="flex items-center justify-between text-xs text-rose-600 dark:text-rose-400 font-medium pt-1">
               <span>* Indica que la pregunta es obligatoria</span>
               <span className="text-muted-foreground">Tiempo estimado: ~2 minutos</span>
@@ -441,37 +445,6 @@ export function SurveyForm({ onBackToHome }: { onBackToHome?: () => void }) {
           </motion.div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Nombre Completo */}
-            <div
-              className={`bg-card rounded-2xl border p-5 sm:p-6 shadow-sm transition-all duration-200 ${
-                validationErrors.fullName ? 'border-destructive ring-1 ring-destructive' : ''
-              }`}
-            >
-              <div className="space-y-3">
-                <Label className="text-base font-semibold leading-snug" htmlFor="fullName">
-                  Nombre completo <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="fullName"
-                  value={formData.fullName}
-                  onChange={(e) => {
-                    setFormData({ ...formData, fullName: e.target.value })
-                    if (validationErrors.fullName) {
-                      setValidationErrors((p) => ({ ...p, fullName: '' }))
-                    }
-                  }}
-                  placeholder="Escriba sus nombres y apellidos..."
-                  className="rounded-xl"
-                  autoComplete="name"
-                />
-                {validationErrors.fullName && (
-                  <p className="text-xs text-destructive flex items-center gap-1">
-                    <AlertCircle className="h-3 w-3" /> {validationErrors.fullName}
-                  </p>
-                )}
-              </div>
-            </div>
-
             {/* P1: Mayor de edad y residente */}
             <div
               className={`bg-card rounded-2xl border p-5 sm:p-6 shadow-sm transition-all duration-200 ${

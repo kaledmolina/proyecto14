@@ -23,13 +23,8 @@ export async function POST(req: NextRequest) {
       firstChange,
     } = body;
 
-    // Basic validation
-    if (!fullName?.trim()) {
-      return NextResponse.json(
-        { error: "Por favor ingrese su nombre completo." },
-        { status: 400 }
-      );
-    }
+    // Anonymous survey - fullName is optional, defaults to 'Anónimo'
+    const respondentName = fullName?.trim() || "Anónimo";
 
     if (!isAdultResident) {
       return NextResponse.json(
@@ -81,7 +76,7 @@ export async function POST(req: NextRequest) {
     const response = await db.surveyResponse.create({
       data: {
         surveyCode: "sondeo_ibague_1",
-        fullName: fullName.trim(),
+        fullName: respondentName,
         isAdultResident,
         gender,
         ageRange,
