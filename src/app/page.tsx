@@ -10,6 +10,7 @@ import { HeroCarousel } from '@/components/public/HeroCarousel'
 import { NewsGrid } from '@/components/public/NewsGrid'
 import { ArticleDetail } from '@/components/public/ArticleDetail'
 import { PublicFooter } from '@/components/public/PublicFooter'
+import { SurveyForm } from '@/components/public/SurveyForm'
 import AdminPanel from '@/components/admin/AdminPanel'
 import SetupScreen from '@/components/admin/SetupScreen'
 import { Button } from '@/components/ui/button'
@@ -24,7 +25,7 @@ import {
 } from '@/components/ui/dialog'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
-import { Globe, Shield, X, Loader2 } from 'lucide-react'
+import { Globe, Shield, X, Loader2, Vote } from 'lucide-react'
 import { toast } from 'sonner'
 
 // ============================================================
@@ -37,6 +38,7 @@ function PublicPortal({ onLoginClick }: { onLoginClick: () => void }) {
   const fetchSettings = usePublicStore((s) => s.fetchSettings)
   const fetchArticles = usePublicStore((s) => s.fetchArticles)
   const fetchArticle = usePublicStore((s) => s.fetchArticle)
+  const setView = usePublicStore((s) => s.setView)
 
   const publicSettings = usePublicStore((s) => s.settings)
   const selectedArticle = usePublicStore((s) => s.selectedArticle)
@@ -58,7 +60,9 @@ function PublicPortal({ onLoginClick }: { onLoginClick: () => void }) {
       const siteName = rawSiteName.replace(/Colombia\s+en\s+Debate/gi, 'Tolima Informa')
       const rawSeoTitle = publicSettings.seo_title || `${siteName} | Portal de Noticias Digital`
       const seoTitle = rawSeoTitle.replace(/Colombia\s+en\s+Debate/gi, 'Tolima Informa')
-      if (currentView === 'article' && selectedArticle) {
+      if (currentView === 'survey') {
+        document.title = `Sondeo Web #1 - Ibagué | ${siteName}`
+      } else if (currentView === 'article' && selectedArticle) {
         document.title = `${selectedArticle.title} | ${siteName}`
       } else {
         document.title = seoTitle
@@ -95,8 +99,50 @@ function PublicPortal({ onLoginClick }: { onLoginClick: () => void }) {
                 />
               )}
 
+              {/* Sondeo Web Banner */}
+              <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-6">
+                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-600 via-rose-700 to-amber-700 text-white p-6 sm:p-7 shadow-lg">
+                  <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="space-y-1.5 max-w-2xl">
+                      <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-white/20 text-white backdrop-blur">
+                        <Vote className="h-3.5 w-3.5" /> Sondeo de Opinión Pública #1
+                      </div>
+                      <h2 className="text-xl sm:text-2xl font-black tracking-tight">
+                        ¿Cómo ve el rumbo y el futuro de Ibagué?
+                      </h2>
+                      <p className="text-white/90 text-xs sm:text-sm">
+                        Participe en nuestro sondeo en alianza con <strong>Aguilar Consulting Group</strong>. 
+                        Su opinión sobre las problemáticas de la ciudad y la gestión local es fundamental. Solo toma 2 minutos.
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <Button
+                        onClick={() => {
+                          setView('survey')
+                          window.scrollTo({ top: 0, behavior: 'smooth' })
+                        }}
+                        className="bg-white text-rose-700 hover:bg-white/95 font-bold px-5 py-2.5 h-auto text-sm shadow-md rounded-xl hover:scale-105 transition-transform"
+                      >
+                        Responder Sondeo Ahora
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="absolute -right-10 -bottom-10 w-44 h-44 bg-white/10 rounded-full blur-2xl pointer-events-none" />
+                </div>
+              </div>
+
               {/* News Grid & Sidebar Layout */}
               <NewsGrid />
+            </motion.div>
+          ) : currentView === 'survey' ? (
+            <motion.div
+              key="survey"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <SurveyForm onBackToHome={() => setView('home')} />
             </motion.div>
           ) : (
             <motion.div

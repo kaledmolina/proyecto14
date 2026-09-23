@@ -4,7 +4,7 @@ import { create } from 'zustand'
 
 // --- Types ---
 
-export type AdminSection = 'dashboard' | 'articles' | 'users' | 'logs' | 'categories' | 'tags' | 'settings'
+export type AdminSection = 'dashboard' | 'articles' | 'users' | 'logs' | 'categories' | 'tags' | 'settings' | 'surveys'
 
 export interface ArticleAuthor {
   id: string

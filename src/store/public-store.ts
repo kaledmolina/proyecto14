@@ -36,7 +36,7 @@ export interface Article {
 }
 
 interface PublicState {
-  currentView: 'home' | 'article'
+  currentView: 'home' | 'article' | 'survey'
   selectedArticle: Article | null
   categories: Category[]
   tags: Tag[]
@@ -62,7 +62,7 @@ interface PublicState {
     featured?: boolean
   }) => Promise<void>
   fetchArticle: (id: string) => Promise<void>
-  setView: (view: 'home' | 'article') => void
+  setView: (view: 'home' | 'article' | 'survey') => void
   selectCategory: (slug: string | null) => void
   search: (query: string) => void
   setPage: (page: number) => void

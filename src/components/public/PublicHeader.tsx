@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { useMounted } from '@/hooks/use-mounted'
-import { Menu, Moon, Sun, Search, X, LogIn, Loader2 } from 'lucide-react'
+import { Menu, Moon, Sun, Search, X, LogIn, Loader2, Vote } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Input } from '@/components/ui/input'
@@ -22,6 +22,7 @@ export function PublicHeader({ onLoginClick }: PublicHeaderProps) {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
   const [mobileSearchQuery, setMobileSearchQuery] = useState('')
 
+  const currentView = usePublicStore((s) => s.currentView)
   const categories = usePublicStore((s) => s.categories)
   const selectedCategory = usePublicStore((s) => s.selectedCategory)
   const selectCategory = usePublicStore((s) => s.selectCategory)
@@ -134,6 +135,26 @@ export function PublicHeader({ onLoginClick }: PublicHeaderProps) {
               )}
             </button>
           ))}
+
+          {/* Survey Direct Button */}
+          <button
+            onClick={() => {
+              setView('survey')
+              window.scrollTo({ top: 0, behavior: 'smooth' })
+            }}
+            className={`ml-2 relative flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-full transition-all duration-300 border ${
+              currentView === 'survey'
+                ? 'bg-primary text-primary-foreground border-primary shadow-sm shadow-primary/25'
+                : 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 hover:scale-105'
+            }`}
+          >
+            <Vote className="h-3.5 w-3.5" />
+            <span>Sondeo Ibagué</span>
+            <span className="flex h-2 w-2 relative">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+            </span>
+          </button>
         </nav>
 
         {/* Desktop Actions */}
@@ -237,7 +258,24 @@ export function PublicHeader({ onLoginClick }: PublicHeaderProps) {
               <Separator className="mx-4" />
 
               {/* Mobile Categories */}
-              <nav className="flex flex-col gap-1 px-4 pt-2" aria-label="Mobile navigation">
+              <nav className="flex flex-col gap-1.5 px-4 pt-2" aria-label="Mobile navigation">
+                {/* Mobile Sondeo Callout */}
+                <button
+                  onClick={() => {
+                    setView('survey')
+                    window.scrollTo({ top: 0, behavior: 'smooth' })
+                  }}
+                  className="flex items-center justify-between p-3 mb-1 rounded-xl bg-gradient-to-r from-red-600 to-rose-700 text-white font-semibold text-sm shadow-md"
+                >
+                  <div className="flex items-center gap-2">
+                    <Vote className="h-4 w-4" />
+                    <span>Sondeo Web #1 Ibagué</span>
+                  </div>
+                  <span className="text-[10px] uppercase tracking-wider bg-white/25 px-2 py-0.5 rounded-full font-bold">
+                    Participar
+                  </span>
+                </button>
+
                 <button
                   onClick={() => {
                     handleCategoryClick(null)

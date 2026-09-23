@@ -18,6 +18,7 @@ import {
   PenTool,
   Sun,
   Moon,
+  Vote,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -41,6 +42,7 @@ import LogsViewer from './LogsViewer'
 import CategoriesManager from './CategoriesManager'
 import TagsManager from './TagsManager'
 import SettingsManager from './SettingsManager'
+import SurveyManager from './SurveyManager'
 
 interface AdminPanelProps {
   session: Session
@@ -56,6 +58,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard className="h-4 w-4" /> },
+  { id: 'surveys', label: 'Sondeos / Encuestas', icon: <Vote className="h-4 w-4" /> },
   { id: 'articles', label: 'Artículos', icon: <FileText className="h-4 w-4" /> },
   { id: 'users', label: 'Usuarios', icon: <Users className="h-4 w-4" />, adminOnly: true },
   { id: 'logs', label: 'Historial de Actividad', icon: <ScrollText className="h-4 w-4" />, adminOnly: true },
@@ -186,6 +189,8 @@ export default function AdminPanel({ session, onLogout }: AdminPanelProps) {
     switch (activeSection) {
       case 'dashboard':
         return <Dashboard isAdmin={isAdmin} />
+      case 'surveys':
+        return <SurveyManager />
       case 'articles':
         return <ArticleManager isAdmin={isAdmin} userId={session.user.id} />
       case 'users':
