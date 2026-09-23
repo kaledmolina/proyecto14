@@ -61,7 +61,7 @@ function PublicPortal({ onLoginClick }: { onLoginClick: () => void }) {
       const rawSeoTitle = publicSettings.seo_title || `${siteName} | Portal de Noticias Digital`
       const seoTitle = rawSeoTitle.replace(/Colombia\s+en\s+Debate/gi, 'Tolima Informa')
       if (currentView === 'survey') {
-        document.title = `Sondeo Web #1 - Ibagué | ${siteName}`
+        document.title = `Ibagué decide | ${siteName}`
       } else if (currentView === 'article' && selectedArticle) {
         document.title = `${selectedArticle.title} | ${siteName}`
       } else {

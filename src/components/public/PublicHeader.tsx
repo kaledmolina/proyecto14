@@ -269,7 +269,7 @@ export function PublicHeader({ onLoginClick }: PublicHeaderProps) {
                 >
                   <div className="flex items-center gap-2">
                     <Vote className="h-4 w-4" />
-                    <span>Sondeo Web #1 Ibagué</span>
+                    <span>Ibagué decide</span>
                   </div>
                   <span className="text-[10px] uppercase tracking-wider bg-white/25 px-2 py-0.5 rounded-full font-bold">
                     Participar

@@ -248,7 +248,7 @@ export function SurveyForm({ onBackToHome }: { onBackToHome?: () => void }) {
                   Sondeo de Opinión Pública
                 </div>
                 <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-                  Sondeo web #1
+                  Ibagué decide
                 </h1>
                 <p className="text-sm font-medium text-muted-foreground flex items-center gap-1.5">
                   <Building2 className="h-4 w-4 text-primary" />
@@ -285,7 +285,7 @@ export function SurveyForm({ onBackToHome }: { onBackToHome?: () => void }) {
             <div className="space-y-2 max-w-md mx-auto">
               <h2 className="text-2xl font-bold tracking-tight">¡Muchas gracias por su tiempo!</h2>
               <p className="text-muted-foreground text-sm">
-                Se ha registrado su respuesta exitosamente en el Sondeo Web #1 de Ibagué. Su opinión es
+                Se ha registrado su respuesta exitosamente en Ibagué decide. Su opinión es
                 fundamental para conocer las necesidades y la voz de la ciudadanía.
               </p>
             </div>
