@@ -13,6 +13,10 @@ import {
   ArrowLeft,
   Sparkles,
   HelpCircle,
+  Share2,
+  Copy,
+  Check,
+  MessageCircle,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -202,6 +206,66 @@ export function SurveyForm({ onBackToHome }: { onBackToHome?: () => void }) {
     }
   }
 
+  const [copiedLink, setCopiedLink] = useState(false)
+
+  const getDirectSurveyUrl = () => {
+    if (typeof window !== 'undefined') {
+      return `${window.location.origin}/encuesta`
+    }
+    return '/encuesta'
+  }
+
+  const handleShare = async () => {
+    const url = getDirectSurveyUrl()
+    const title = 'Ibagué decide - Sondeo de Opinión Pública'
+    const text = 'Participa en el sondeo ciudadano "Ibagué decide" y da a conocer tu opinión sobre el rumbo y futuro de nuestra ciudad:'
+
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title,
+          text,
+          url,
+        })
+        toast.success('¡Enlace compartido exitosamente!')
+        return
+      } catch (err: any) {
+        if (err?.name === 'AbortError') return
+      }
+    }
+
+    handleCopyLink()
+  }
+
+  const handleCopyLink = async () => {
+    const url = getDirectSurveyUrl()
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(url)
+      } else {
+        const textarea = document.createElement('textarea')
+        textarea.value = url
+        document.body.appendChild(textarea)
+        textarea.select()
+        document.execCommand('copy')
+        document.body.removeChild(textarea)
+      }
+      setCopiedLink(true)
+      setTimeout(() => setCopiedLink(false), 2500)
+      toast.success('¡Enlace directo copiado al portapapeles!', {
+        description: url,
+      })
+    } catch {
+      toast.info(`Enlace directo: ${url}`)
+    }
+  }
+
+  const handleWhatsAppShare = () => {
+    const url = getDirectSurveyUrl()
+    const message = `Te invito a participar en el sondeo ciudadano "Ibagué decide". Tu opinión es muy importante para el futuro de nuestra ciudad:\n\n${url}`
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`, '_blank')
+  }
+
   const handleReset = () => {
     if (window.confirm('¿Desea reiniciar el formulario y borrar las respuestas?')) {
       setFormData(initialFormData)
@@ -241,7 +305,7 @@ export function SurveyForm({ onBackToHome }: { onBackToHome?: () => void }) {
           <div className="h-3.5 bg-gradient-to-r from-red-600 via-rose-600 to-amber-600" />
 
           <div className="p-6 sm:p-8 space-y-4">
-            <div className="border-b pb-5">
+            <div className="border-b pb-5 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <div className="space-y-1">
                 <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary mb-2">
                   <Vote className="h-3.5 w-3.5" />
@@ -254,6 +318,32 @@ export function SurveyForm({ onBackToHome }: { onBackToHome?: () => void }) {
                   <Building2 className="h-4 w-4 text-primary" />
                   Ibagué, Tolima, Colombia
                 </p>
+              </div>
+
+              {/* Botones para compartir el link directo de la encuesta */}
+              <div className="flex items-center gap-2 self-start sm:self-center shrink-0">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleShare}
+                  className="rounded-xl shadow-sm text-xs font-semibold gap-1.5 border-primary/20 hover:border-primary/40 hover:bg-primary/5 transition-all"
+                  title="Compartir o copiar enlace"
+                >
+                  <Share2 className="h-3.5 w-3.5 text-primary" />
+                  Compartir enlace
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleCopyLink}
+                  title="Copiar enlace directo"
+                  className="rounded-xl text-xs gap-1.5 text-muted-foreground hover:text-foreground"
+                >
+                  {copiedLink ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+                  <span className="hidden sm:inline">{copiedLink ? 'Copiado' : 'Copiar link'}</span>
+                </Button>
               </div>
             </div>
 
@@ -295,6 +385,39 @@ export function SurveyForm({ onBackToHome }: { onBackToHome?: () => void }) {
                 <Sparkles className="h-4 w-4 text-primary" /> Participación Registrada
               </div>
               <p>Tus respuestas han sido almacenadas de manera anónima para el informe estadístico.</p>
+            </div>
+
+            {/* Invitar y compartir el enlace directo */}
+            <div className="p-5 rounded-2xl bg-primary/5 border border-primary/15 max-w-md mx-auto text-center space-y-3">
+              <div className="space-y-1">
+                <p className="text-sm font-bold text-foreground flex items-center justify-center gap-1.5">
+                  <Share2 className="h-4 w-4 text-primary" /> ¡Ayúdanos a difundir este sondeo!
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Comparte el link directo con amigos, familiares o en grupos de Ibagué:
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCopyLink}
+                  className="rounded-xl text-xs gap-1.5 font-medium shadow-sm"
+                >
+                  {copiedLink ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+                  {copiedLink ? '¡Enlace copiado!' : 'Copiar enlace directo'}
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={handleWhatsAppShare}
+                  className="rounded-xl text-xs gap-1.5 bg-[#25D366] hover:bg-[#1ebd59] text-white shadow-sm font-semibold"
+                >
+                  <MessageCircle className="h-3.5 w-3.5" />
+                  Compartir en WhatsApp
+                </Button>
+              </div>
             </div>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3">

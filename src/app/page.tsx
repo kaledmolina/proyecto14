@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/dialog'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
-import { Globe, Shield, X, Loader2, Vote } from 'lucide-react'
+import { Globe, Shield, X, Loader2, Vote, Share2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 // ============================================================
@@ -47,6 +47,55 @@ function PublicPortal({ onLoginClick }: { onLoginClick: () => void }) {
     fetchCategories()
     fetchSettings()
   }, [fetchCategories, fetchSettings])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      if (
+        params.get('view') === 'survey' ||
+        params.has('encuesta') ||
+        params.has('sondeo') ||
+        window.location.hash === '#encuesta' ||
+        window.location.hash === '#survey'
+      ) {
+        setView('survey')
+      }
+    }
+  }, [setView])
+
+  const handleShareDirectSurvey = async () => {
+    const url = typeof window !== 'undefined' ? `${window.location.origin}/encuesta` : '/encuesta'
+    const title = 'Ibagué decide - Sondeo de Opinión Pública'
+    const text = 'Participa en el sondeo ciudadano "Ibagué decide" y da a conocer tu opinión sobre el rumbo y futuro de nuestra ciudad:'
+
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({ title, text, url })
+        toast.success('¡Enlace compartido exitosamente!')
+        return
+      } catch (err: any) {
+        if (err?.name === 'AbortError') return
+      }
+    }
+
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(url)
+      } else {
+        const textarea = document.createElement('textarea')
+        textarea.value = url
+        document.body.appendChild(textarea)
+        textarea.select()
+        document.execCommand('copy')
+        document.body.removeChild(textarea)
+      }
+      toast.success('¡Enlace directo copiado al portapapeles!', {
+        description: url,
+      })
+    } catch {
+      toast.info(`Enlace directo: ${url}`)
+    }
+  }
 
   useEffect(() => {
     if (currentView === 'home') {
@@ -115,7 +164,7 @@ function PublicPortal({ onLoginClick }: { onLoginClick: () => void }) {
                         Su percepción sobre las problemáticas y el futuro de la ciudad es fundamental. Solo toma 2 minutos.
                       </p>
                     </div>
-                    <div className="flex items-center gap-3 shrink-0">
+                    <div className="flex flex-wrap items-center gap-3 shrink-0">
                       <Button
                         onClick={() => {
                           setView('survey')
@@ -124,6 +173,15 @@ function PublicPortal({ onLoginClick }: { onLoginClick: () => void }) {
                         className="bg-white text-rose-700 hover:bg-white/95 font-bold px-5 py-2.5 h-auto text-sm shadow-md rounded-xl hover:scale-105 transition-transform"
                       >
                         Responder Sondeo Ahora
+                      </Button>
+                      <Button
+                        type="button"
+                        onClick={handleShareDirectSurvey}
+                        variant="secondary"
+                        className="bg-white/20 hover:bg-white/30 text-white font-semibold px-4 py-2.5 h-auto text-sm backdrop-blur border border-white/30 rounded-xl flex items-center gap-2 transition-all hover:scale-105 shadow-sm"
+                      >
+                        <Share2 className="h-4 w-4" />
+                        Compartir enlace
                       </Button>
                     </div>
                   </div>

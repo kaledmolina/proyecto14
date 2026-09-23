@@ -22,6 +22,9 @@ import {
   HelpCircle,
   Shield,
   Loader2,
+  Share2,
+  Copy,
+  ExternalLink,
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -277,6 +280,27 @@ export default function SurveyManager() {
   const badTrackPct =
     stats?.cityTrackStats?.find((t) => t.name === 'Mal camino')?.percentage || 0
 
+  const handleCopySurveyLink = async () => {
+    const url = typeof window !== 'undefined' ? `${window.location.origin}/encuesta` : '/encuesta'
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(url)
+      } else {
+        const textarea = document.createElement('textarea')
+        textarea.value = url
+        document.body.appendChild(textarea)
+        textarea.select()
+        document.execCommand('copy')
+        document.body.removeChild(textarea)
+      }
+      toast.success('¡Enlace directo a la encuesta copiado!', {
+        description: url,
+      })
+    } catch {
+      toast.info(`Enlace directo: ${url}`)
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Top Banner & Action Header */}
@@ -284,7 +308,7 @@ export default function SurveyManager() {
         <div className="space-y-1">
           <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-600 dark:text-rose-400">
             <Vote className="h-3.5 w-3.5" />
-            Sondeo web #1 · Opinión Pública Ibagué
+            Ibagué decide · Opinión Pública Ibagué
           </div>
           <h1 className="text-2xl font-bold tracking-tight">Informe de Encuesta: Ibagué</h1>
           <p className="text-xs sm:text-sm text-muted-foreground">
@@ -292,7 +316,30 @@ export default function SurveyManager() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleCopySurveyLink}
+            className="gap-1.5 border-rose-500/25 text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 shadow-sm"
+            title="Copiar enlace directo /encuesta"
+          >
+            <Share2 className="h-4 w-4" />
+            Copiar Link del Sondeo
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            asChild
+            className="gap-1.5 text-muted-foreground hover:text-foreground"
+          >
+            <a href="/encuesta" target="_blank" rel="noopener noreferrer">
+              <ExternalLink className="h-4 w-4" />
+              Ver encuesta
+            </a>
+          </Button>
+
           <Button
             variant="outline"
             size="sm"
