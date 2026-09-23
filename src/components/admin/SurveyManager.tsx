@@ -281,7 +281,7 @@ export default function SurveyManager() {
         <div className="space-y-1">
           <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-600 dark:text-rose-400">
             <Vote className="h-3.5 w-3.5" />
-            Sondeo web #1 · Aguilar Consulting Group
+            Sondeo web #1 · Opinión Pública Ibagué
           </div>
           <h1 className="text-2xl font-bold tracking-tight">Informe de Encuesta: Ibagué</h1>
           <p className="text-xs sm:text-sm text-muted-foreground">

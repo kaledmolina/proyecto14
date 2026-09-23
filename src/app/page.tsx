@@ -111,8 +111,8 @@ function PublicPortal({ onLoginClick }: { onLoginClick: () => void }) {
                         ¿Cómo ve el rumbo y el futuro de Ibagué?
                       </h2>
                       <p className="text-white/90 text-xs sm:text-sm">
-                        Participe en nuestro sondeo en alianza con <strong>Aguilar Consulting Group</strong>. 
-                        Su opinión sobre las problemáticas de la ciudad y la gestión local es fundamental. Solo toma 2 minutos.
+                        Participe en nuestro sondeo de opinión ciudadana. 
+                        Su percepción sobre las problemáticas y el futuro de la ciudad es fundamental. Solo toma 2 minutos.
                       </p>
                     </div>
                     <div className="flex items-center gap-3 shrink-0">

@@ -10,9 +10,6 @@ import {
   RotateCcw,
   Building2,
   Vote,
-  Phone,
-  Mail,
-  Globe,
   ArrowLeft,
   Sparkles,
   HelpCircle,
@@ -240,7 +237,7 @@ export function SurveyForm({ onBackToHome }: { onBackToHome?: () => void }) {
           <div className="h-3.5 bg-gradient-to-r from-red-600 via-rose-600 to-amber-600" />
 
           <div className="p-6 sm:p-8 space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-5">
+            <div className="border-b pb-5">
               <div className="space-y-1">
                 <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary mb-2">
                   <Vote className="h-3.5 w-3.5" />
@@ -253,19 +250,6 @@ export function SurveyForm({ onBackToHome }: { onBackToHome?: () => void }) {
                   <Building2 className="h-4 w-4 text-primary" />
                   Ibagué, Tolima, Colombia
                 </p>
-              </div>
-
-              {/* Company Logo / Header */}
-              <div className="flex flex-col items-start sm:items-end justify-center bg-muted/40 dark:bg-muted/10 p-3 rounded-xl border">
-                <span className="text-xs font-black tracking-wider uppercase text-foreground">
-                  AGUILAR
-                </span>
-                <span className="text-[10px] font-semibold tracking-widest text-muted-foreground uppercase">
-                  Consulting Group
-                </span>
-                <span className="text-[9px] text-muted-foreground/80 font-mono mt-0.5">
-                  NIT. 901162722-2
-                </span>
               </div>
             </div>
 
@@ -302,19 +286,11 @@ export function SurveyForm({ onBackToHome }: { onBackToHome?: () => void }) {
               </p>
             </div>
 
-            <div className="p-4 rounded-xl bg-muted/30 border max-w-md mx-auto text-left space-y-2 text-xs text-muted-foreground">
-              <div className="font-semibold text-foreground text-sm flex items-center gap-1.5">
-                <Sparkles className="h-4 w-4 text-primary" /> Aguilar Consulting Group
+            <div className="p-4 rounded-xl bg-muted/30 border max-w-md mx-auto text-center space-y-1.5 text-xs text-muted-foreground">
+              <div className="font-semibold text-foreground text-sm flex items-center justify-center gap-1.5">
+                <Sparkles className="h-4 w-4 text-primary" /> Participación Registrada
               </div>
-              <div className="flex items-center gap-2">
-                <Phone className="h-3.5 w-3.5" /> 300 797 4618
-              </div>
-              <div className="flex items-center gap-2">
-                <Mail className="h-3.5 w-3.5" /> info@aguilarconsulting.co
-              </div>
-              <div className="flex items-center gap-2">
-                <Globe className="h-3.5 w-3.5" /> www.aguilarconsulting.co
-              </div>
+              <p>Tus respuestas han sido almacenadas de manera anónima para el informe estadístico.</p>
             </div>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3">
@@ -896,10 +872,9 @@ export function SurveyForm({ onBackToHome }: { onBackToHome?: () => void }) {
 
         {/* Footer Credit & Legal */}
         <div className="text-center py-6 text-xs text-muted-foreground border-t space-y-1">
-          <p className="font-semibold text-foreground">AGUILAR CONSULTING GROUP</p>
-          <p>NIT. 901162722-2 | Ibagué, Colombia</p>
+          <p className="font-semibold text-foreground">Sondeo de Opinión Pública Ciudadana</p>
           <p className="text-[11px] text-muted-foreground/80">
-            Teléfono: 300 797 4618 · Correo: info@aguilarconsulting.co · Web: www.aguilarconsulting.co
+            Ibagué, Tolima, Colombia · Respuestas anónimas y de estricto uso estadístico
           </p>
         </div>
       </div>
